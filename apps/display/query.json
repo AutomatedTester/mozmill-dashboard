@@ -1,0 +1,13 @@
+{
+    "query" : {
+        "match_all" : {  }
+    },
+    "facets" : {
+        "tag" : {
+            "terms" : {
+                "field" : "failed_function",
+                "size" : 10
+            }
+        }
+    }
+}

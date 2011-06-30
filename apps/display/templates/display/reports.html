@@ -1,0 +1,53 @@
+{% extends "example_base.html" %}
+
+{% block content %}
+<h1>
+    <a href="/">{{ _('Owen is the BEST') }}</a>
+</h1>
+
+<div>
+Operating System: 
+<form method='post'>{{ csrf() }}
+
+<p>
+<input type="radio" name="os" value="all" checked/>All
+{% for os in operating_systems %}
+<input type="radio" name="os" value="{{os}}"/>{{os}}
+{% endfor %}
+</p>
+
+<p>
+<input type="radio" label="all" name="locale" value="all" checked/>All
+{% for locale in locales %}
+<input type="radio" name="locale" value="{{locale}}"/>{{locale}}
+{% endfor %}
+</p>
+
+<p>
+<input type="text" name="from_date" value="{{from_date}}"/>
+<input type="text" name="to_date" value="{{to_date}}"/>
+</p>
+
+<input type="submit"/>
+</form>
+</div>
+
+<div id="results">
+<table>
+{% for report in reports %}
+  <tr>
+    <td>{{report.date}}<td>
+    <td>{{report.version}}<td>
+    <td>{{report.build}}<td>
+    <td>{{report.locale}}<td>
+    <td>{{report.cpu}}<td>
+    <td>{{report.pass}}<td>
+    <td>{{report.skip}}<td>
+    <td>{{report.fail}}<td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+
+{% endblock %}

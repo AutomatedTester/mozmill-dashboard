@@ -1,6 +1,9 @@
 from django.conf.urls.defaults import *
 
 
-urlpatterns = patterns('examples.views',
-    url(r'^$', 'home', name='examples.home'),
+urlpatterns = patterns('display.views',
+    url(r'^foo/$', 'top_fail', name='display.top_fail'),
+    url(r'^$', 'all_reports', name='display.all_reports'),
+
+#    url(r'^api$', 'top_fail_json', name='display.top_fail_json'),
 )
