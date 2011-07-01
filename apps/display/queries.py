@@ -68,7 +68,9 @@ class reports:
                 'pass':hit['tests_passed'],
                 'skip':hit['tests_skipped'],
                 'fail':hit['tests_failed'],
+                'id':hit['_id'],
             }
+            print result['id']+'  ID MF'
             results.append(result)
 
         return results
@@ -99,9 +101,20 @@ def parse(query, formatter):
         print resp['status']
         return {'response':resp['status']}
         
-def grabber(query):
+def grabber(query, _id=False):
     h=Http()
-    resp, content = h.request('http://localhost:9200/filter1/doc/_search', "GET", json.dumps(query))
+
+
+    server='http://localhost:9200/filter1/doc/'
+
+    if _id:
+        server+=_id
+    else:
+        server+='_search'
+         
+    resp, content = h.request(server, "GET", json.dumps(query))
+    print server
+    print resp
     if resp['status']=='200':
         return json.loads(content)
         #return facets
@@ -110,4 +123,5 @@ def grabber(query):
         raise
         return {'response':resp['status']}
         
+
 

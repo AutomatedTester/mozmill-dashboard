@@ -4,10 +4,35 @@ from copy import deepcopy
 from django import http
 from django.http import HttpResponse
 
-from display.queries import reports, grab_facet_response, grab_operating_systems
+from display.queries import reports, grab_facet_response, grab_operating_systems, grabber 
 
 def hello_world(request):
     return HttpResponse('Hello World')
+
+def report(request,_id):
+    report=grabber('',_id)#['_source']
+    report = report['_source']
+    #print report['_source']
+    data = {
+        "id":_id,
+        "app_name":report['application_name'],
+        "app_version":report['application_version'],
+        "platform_version":report['platform_version'],
+        "app_locale":report['application_locale'],
+        "platform_buildId":report['platform_buildid'],
+        "system":report['system_info']['system'],
+        "system_version":report['system_info']['version'],
+        "service_pack":report['system_info']['service_pack'],
+        "cpu":report['system_info']['processor'],
+        "time_start":report['time_start'],
+        "time_end":report['time_end'],
+        "passed":report['tests_passed'],
+        "failed":report['tests_failed'],
+        "skipped":report['tests_skipped'],
+    }
+
+    return jingo.render(request, 'display/functional_report.html', data)
+
 
 def all_reports(request):
     oses=["windows nt","mac", "linux"]

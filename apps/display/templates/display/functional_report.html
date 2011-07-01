@@ -1,0 +1,59 @@
+{% extends "example_base.html" %}
+
+{% block content %}
+<h1>
+    <a href="/">{{ _('Incase you forgot, Owen is still the best') }}</a>
+</h1>
+
+    <h2>Information</h2>
+    <table id="information" class="clean">
+      <tr>
+       <th>Result ID:</th>
+       <td><a href="http://jsonviewer.stack.hu/#http://mozmill-release.brasstacks.mozilla.com/db/{{id}}">{{id}}</a></td>
+      </tr><tr>
+       <th>Application:</th>
+       <td>{{app_name}} {{app_version}} ({{platform_version}}, {{app_locale}}, {{platform_buildId}})</td>
+      </tr><tr>
+        <th>Platform:</th>
+        <td>{{system}} {{system_version}} {{service_pack}} ({{cpu}})</td>
+      </tr><tr>
+        <th>Duration:</th>
+        <td>{{time_start}} - {{time_end}}</td>
+      </tr><tr>
+        <th>Results:</th>
+        <td>Pass: <strong>{{passed}}</strong> / Fail: <strong>{{failed}}</strong> / Skip: <strong>{{skipped}}</td>
+      </tr>
+    </table>
+
+    <h2>Results</h2>
+    <p id="filter">
+      Filter:
+      <a href="#" id="all">All</a>
+      <a href="#" id="passed">Passed</a>
+      <a href="#" id="failed">Failed</a>
+      <a href="#" id="skipped">Skipped</a>
+    </p>
+
+    <table id="result">
+      <thead>
+        <th>Status</th>
+        <th>Filename</th>
+        <th>Test</th>
+        <th>Information</th>
+      </thead>
+      <tbody>
+        {% for result in results %}
+        <tr class="{{result.status}}">
+          <td>{{result.status}}</td>
+          <td>{{result.filename}}</td>
+          <td>{{result.test}}</td>
+          <td class="information">
+            {{result.information}}
+            <div class="tooltip">{{result.stack}}<div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+{% endblock %}

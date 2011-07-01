@@ -36,7 +36,7 @@ Operating System:
 <table>
 {% for report in reports %}
   <tr>
-    <td>{{report.date}}<td>
+    <td><a href ="/report/{{report.id}}">{{report.date}}</a><td>
     <td>{{report.version}}<td>
     <td>{{report.build}}<td>
     <td>{{report.locale}}<td>
