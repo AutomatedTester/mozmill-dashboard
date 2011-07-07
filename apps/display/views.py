@@ -29,18 +29,24 @@ def report(request,_id):
         "passed":report['tests_passed'],
         "failed":report['tests_failed'],
         "skipped":report['tests_skipped'],
+        "report_type":report['report_type'],
     }
 
     return jingo.render(request, 'display/functional_report.html', data)
 
 
-def all_reports(request):
+def reporter(request,report_type='all'):
+    print report_type
     oses=["windows nt","mac", "linux"]
     locales = ['en-US', 'es-ES', 'fr', 'ja-JP-mac', 'zh-TW', 'de', 'ko', 'pl', 'da', 'it']
     foo=reports()
-
+    foo.clear_filters()
+ 
+    if report_type=='functional':
+        print 'foo'
+        foo.add_filter_term({"report_type": "firefox-functional"})
+        print foo.filters
     if request.method =="POST":
-        foo.clear_filters()
         foo.from_date=request.POST['from_date']
         foo.to_date=request.POST['to_date']
         if request.POST['os'] in oses:

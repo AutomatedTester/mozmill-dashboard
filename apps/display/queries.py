@@ -70,7 +70,6 @@ class reports:
                 'fail':hit['tests_failed'],
                 'id':hit['_id'],
             }
-            print result['id']+'  ID MF'
             results.append(result)
 
         return results
@@ -111,10 +110,8 @@ def grabber(query, _id=False):
         server+=_id
     else:
         server+='_search'
-         
+    print json.dumps(query)     
     resp, content = h.request(server, "GET", json.dumps(query))
-    print server
-    print resp
     if resp['status']=='200':
         return json.loads(content)
         #return facets

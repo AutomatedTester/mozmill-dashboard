@@ -1,20 +1,15 @@
 /* An example CSS file that will be minified. */
+body,div,p,ul,a {
+    padding:0px;
+    margin:0px;
+    list-style:none;
+    text-decoration:none;
+}
+
 body {
     font-family: sans-serif;
     background-color: rgb(56,142,222);
-    background-image: -webkit-gradient(
-      linear,
-      left bottom,
-      left top,
-      color-stop(0.19, rgb(56,142,222)),
-      color-stop(0.6, rgb(82,186,255))
-    );
-    background-image: -moz-linear-gradient(
-      center bottom,
-      rgb(56,142,222) 19%,
-      rgb(82,186,255) 60%
-    );
-    background-repeat: repeat-x;
+    background: url("/media/img/page_bg.png") repeat scroll 0 0 transparent;
     min-height: 800px;
 }
 h1 { 
@@ -22,14 +17,32 @@ h1 {
     margin-left: 30px;
 }
 p,table,div{ 
-    background-color: rgba(255,255,255,0.3);;
-    color: #333;
-    font-family: Courier, serif; 
-    line-height: 1.4;
-    margin-left: 30px;
-    padding: 5px;
-    width: 600px;
+    background-color: #ccc;
 }
+#header{
+    height:30px;
+    font-size:30px;
+    width:100%;
+    background-color:#0A2533;
+    color:#ebebeb;
+    padding: 6px 18px;
+}
+
+#links{
+    background:red;
+    overflow:auto;
+}
+
+#links li{
+    float:left;
+    padding: 6px 12px;
+}
+
+#links li:hover{
+    background-color:#ccc;
+}
+ 
+
 #playdoh { 
     float: left;
     margin-left: 645px;

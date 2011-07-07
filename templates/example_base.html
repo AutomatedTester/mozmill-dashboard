@@ -2,7 +2,7 @@
 <html LANG="{{ LANG }}" dir="{{ DIR }}">
   <head>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
-    <title>{% block page_title %}playdoh examples{% endblock %}</title>
+    <title>{% block page_title %}Mozmill Dashboard{% endblock %}</title>
 
     {% block site_css %}
       {{ css('example_css') }}
@@ -12,6 +12,14 @@
     {% endblock %}
  </head>
   <body>
+    <div id='header'>Mozmill Dashboard</div>
+    <ul id='links'>
+      <li><a href='/'>All</a></li>
+      <li><a href='/functional/'>Functional</a></li>
+      <li><a href='/endurance/'>Endurance</a></li>
+      <li><a href='/update/'>Update</a></li>
+
+    </ul>
     {% block content %}{% endblock %}
   </body>
 </html>
