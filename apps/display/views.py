@@ -2,7 +2,7 @@ import jingo
 import simplejson as json
 from copy import deepcopy
 from django import http
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 
 from display.queries import reports, grab_facet_response, grab_operating_systems, grabber 
 
@@ -10,9 +10,9 @@ def hello_world(request):
     return HttpResponse('Hello World')
 
 def report(request,_id):
+    #print request.GET['result']
     report=grabber('',_id)#['_source']
     report = report['_source']
-    #print report['_source']
     data = {
         "id":_id,
         "app_name":report['application_name'],
@@ -30,8 +30,36 @@ def report(request,_id):
         "failed":report['tests_failed'],
         "skipped":report['tests_skipped'],
         "report_type":report['report_type'],
+        'results':[],
     }
 
+    results=report['results']
+    for result in results:
+        if result['failed']>0:
+            result['status']='fails'
+        elif (result['failed']==0) and (result['passed']==0) and (result['name'] in ['setupModule','teardownModule']):
+            result['status']='passed'
+        elif (result['failed']==0) and (result['passed']>0):
+            result['status']='passed'
+        else:
+            print "skipppeeedddd"
+            result['status']='skipped'
+
+    try:
+        request.GET['status']
+    except KeyError:
+        status='fails'
+    else:
+        if not request.GET['status'] in ['all','failed','passed','skipped']:
+            return HttpResponseForbidden()
+        status=request.GET['status']
+
+    if status=='all':
+        data['results']=results
+    else:
+        for result in results:
+            if status == result['status']:
+                data['results'].append(result)
     return jingo.render(request, 'display/functional_report.html', data)
 
 
@@ -43,16 +71,26 @@ def reporter(request,report_type='all'):
     foo.clear_filters()
  
     if report_type=='functional':
-        print 'foo'
         foo.add_filter_term({"report_type": "firefox-functional"})
-        print foo.filters
-    if request.method =="POST":
-        foo.from_date=request.POST['from_date']
-        foo.to_date=request.POST['to_date']
-        if request.POST['os'] in oses:
-            foo.add_filter_term({'system':request.POST['os']})
-        if request.POST['locale'] in locales:
-            foo.add_filter_term({'application_locale':request.POST['locale']})
+    elif report_type=='endurance':
+        foo.add_filter_term({"report_type": "firefox-endurance"})
+    elif report_type=='updade':
+        foo.add_filter_term({"report_type": "firefox-update"})
+    try:
+        request.GET['os']
+        request.GET['locale']
+        request.GET['from_date']
+        request.GET['to_date']
+    except KeyError:
+        pass
+        print 'no filter'
+    else:
+        foo.from_date=request.GET['from_date']
+        foo.to_date=request.GET['to_date']
+        if request.GET['os'] in oses:
+            foo.add_filter_term({'system':request.GET['os']})
+        if request.GET['locale'] in locales:
+            foo.add_filter_term({'application_locale':request.GET['locale']})
 
     data = {
         'reports':foo.return_reports(),

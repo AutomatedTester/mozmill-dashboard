@@ -1,13 +1,10 @@
 {% extends "example_base.html" %}
 
 {% block content %}
-<h1>
-    <a href="/">{{ _('Owen is the BEST') }}</a>
-</h1>
 
 <div>
 Operating System: 
-<form method='post'>{{ csrf() }}
+<form method='get'>
 
 <p>
 <input type="radio" name="os" value="all" checked/>All
@@ -44,7 +41,6 @@ Operating System:
     <td>{{report.pass}}<td>
     <td>{{report.skip}}<td>
     <td>{{report.fail}}<td>
-    <td><a href = '/report/{{report.id}}'>{{report.id}}<a><td>
 </tr>
 {% endfor %}
 </table>

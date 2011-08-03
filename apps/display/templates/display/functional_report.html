@@ -1,10 +1,6 @@
 {% extends "example_base.html" %}
 
 {% block content %}
-<h1>
-    <a href="/">{{ _('Incase you forgot, Owen is still the best') }}</a>
-</h1>
-
     <h2>Information</h2>
     <table id="information" class="clean">
       <tr>
@@ -32,10 +28,10 @@
     <h2>Results</h2>
     <p id="filter">
       Filter:
-      <a href="#" id="all">All</a>
-      <a href="#" id="passed">Passed</a>
-      <a href="#" id="failed">Failed</a>
-      <a href="#" id="skipped">Skipped</a>
+      <a href="?status=all" id="all">All</a>
+      <a href="?status=passed" id="passed">Passed</a>
+      <a href="?status=failed" id="failed">Failed</a>
+      <a href="?status=skipped" id="skipped">Skipped</a>
     </p>
 
     <table id="result">
