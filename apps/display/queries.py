@@ -97,26 +97,22 @@ def parse(query, formatter):
         facets = formatter(content['facets'])
         return facets
     else:
-        print resp['status']
         return {'response':resp['status']}
         
 def grabber(query, _id=False):
     h=Http()
 
 
-    server='http://localhost:9200/filter1/doc/'
-
+    server='http://localhost:9200/db/db/'
     if _id:
         server+=_id
     else:
         server+='_search'
-    print json.dumps(query)     
     resp, content = h.request(server, "GET", json.dumps(query))
     if resp['status']=='200':
         return json.loads(content)
         #return facets
     else:#TODO: Should maybe throw an exeption on this guy
-        print resp['status']
         raise
         return {'response':resp['status']}
         

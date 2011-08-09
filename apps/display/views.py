@@ -10,7 +10,6 @@ def hello_world(request):
     return HttpResponse('Hello World')
 
 def report(request,_id):
-    #print request.GET['result']
     report=grabber('',_id)#['_source']
     report = report['_source']
     data = {
@@ -42,7 +41,6 @@ def report(request,_id):
         elif (result['failed']==0) and (result['passed']>0):
             result['status']='passed'
         else:
-            print "skipppeeedddd"
             result['status']='skipped'
 
     try:
@@ -64,7 +62,6 @@ def report(request,_id):
 
 
 def reporter(request,report_type='all'):
-    print report_type
     oses=["windows nt","mac", "linux"]
     locales = ['en-US', 'es-ES', 'fr', 'ja-JP-mac', 'zh-TW', 'de', 'ko', 'pl', 'da', 'it']
     foo=reports()
@@ -83,7 +80,6 @@ def reporter(request,report_type='all'):
         request.GET['to_date']
     except KeyError:
         pass
-        print 'no filter'
     else:
         foo.from_date=request.GET['from_date']
         foo.to_date=request.GET['to_date']
@@ -135,13 +131,11 @@ def top_fail(request):
         }
     }
 }
-    print json.dumps(os_query)
     os_query=deepcopy(query)
     os_query['facets']['tag']['terms']['field']='system'
     oses = grab_operating_systems(os_query)
 
     if request.method=="POST":
-        print 'POST'
         if request.POST['os'] in oses:
             query['query']={"term":{
                 "system":request.POST['os']

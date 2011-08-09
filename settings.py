@@ -188,15 +188,18 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = '%s.urls' % ROOT_PACKAGE
 
+LOGIN_REDIRECT_URL = "/en-US/accounts/profile/"
+
 INSTALLED_APPS = (
     # Local apps
     'commons',  # Content common to most playdoh-based apps.
     'jingo_minify',
     'tower',  # for ./manage.py extract (L10n)
-
+    'login',
     'examples',  # Example code. Can (and should) be removed for actual projects.
     'display',
     'grow',
+    'browserid_auth',
 
     # We need this so the jsi18n view will pick up our locale directory.
     ROOT_PACKAGE,
@@ -211,7 +214,7 @@ INSTALLED_APPS = (
     'django_sha2',  # Load after auth to monkey-patch it.
 
     'django.contrib.contenttypes',
-    # 'django.contrib.sessions',
+    'django.contrib.sessions',
     # 'django.contrib.sites',
     # 'django.contrib.messages',
     # Uncomment the next line to enable the admin:
@@ -222,6 +225,10 @@ INSTALLED_APPS = (
     # L10n
     'product_details',
 
+)
+
+AUTHENTICATION_BACKENDS = (
+    'login.backends.BrowserIdBackend',
 )
 
 # Tells the extract script what files to look for L10n in and what function

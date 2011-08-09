@@ -8,6 +8,7 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns('',
     # Example:
     (r'^grow/', include('grow.urls')),
+    (r'^accounts/', include('login.urls')),
     (r'', include('display.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
