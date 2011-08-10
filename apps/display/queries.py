@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 
 import simplejson as json
+import datetime
 from httplib2 import Http
+
+def format_date(date):
+    return "%s-%s-%s"%(date.year,date.month,date.day)
 
 class reports:
     query = {
@@ -25,6 +29,14 @@ class reports:
     filters=[]
     from_date="2011-01-16"
     to_date="2011-01-19"
+
+    def __init__(self):
+        today = datetime.date.today()
+        delta = datetime.timedelta(days=-3)
+        three_ago = today+delta
+
+        self.to_date = format_date(today)
+        self.from_date = format_date(three_ago)
 
     def update_query(self):
         if len(self.filters)==0:
