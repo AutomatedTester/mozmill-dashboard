@@ -7,7 +7,7 @@ Installation
 =======
 
 * Install mysql-server
-** Create a database called "dashboard" using "CREATE DATABASE dashboard;"
+ * Create a database called "dashboard" using "CREATE DATABASE dashboard;"
 * configure settings_local.py to include db configurations
 * pip install -r requirements/compiled.txt
 * Run `./manage.py syncdb --noinput`
