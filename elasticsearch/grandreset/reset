@@ -1,0 +1,9 @@
+#!/bin/sh
+curl -X DELETE 'http://localhost:9200/filter1'
+echo 'sent delete command'
+curl -X PUT 'http://localhost:9200/filter1'
+echo 'createing index'
+./mappin
+echo 'created map'
+./readdb
+echo "done"
