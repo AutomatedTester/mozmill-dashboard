@@ -3,6 +3,7 @@
 import simplejson as json
 import datetime
 from httplib2 import Http
+from django.conf import settings
 
 def format_date(date):
     return "%s-%s-%s"%(date.year,date.month,date.day)
@@ -115,7 +116,7 @@ def grabber(query, _id=False):
     h=Http()
 
 
-    server='http://localhost:9200/db/db/'
+    server=settings.ELASTICSEARCH
     if _id:
         server+=_id
     else:

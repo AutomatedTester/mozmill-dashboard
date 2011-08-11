@@ -10,6 +10,10 @@ path = lambda *a: os.path.join(ROOT, *a)
 
 ROOT_PACKAGE = os.path.basename(ROOT)
 
+#Owens settings
+ELASTICSEARCH='http://localhost:9200/filter1/doc/'
+
+
 # Is this a dev instance?
 DEV = False
 
