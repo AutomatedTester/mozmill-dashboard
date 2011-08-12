@@ -131,6 +131,3 @@ def grabber(query, _id=False):
     else:#TODO: Should maybe throw an exeption on this guy
         raise
         return {'response':resp['status']}
-        
-
-

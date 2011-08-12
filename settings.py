@@ -167,7 +167,7 @@ MINIFY_BUNDLES = {
     'css': {
         'example_css': (
             'css/display/main.css',
-            'css/examples/main.css',
+            'css/display/header.css',
         ),
     },
     'js': {
