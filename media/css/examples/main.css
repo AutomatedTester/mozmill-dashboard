@@ -47,3 +47,7 @@ p,table,div{
     float: left;
     margin-left: 645px;
 }
+
+a.highlighted{
+    background:#FDEEF4;
+}

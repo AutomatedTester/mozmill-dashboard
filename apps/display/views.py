@@ -34,30 +34,46 @@ def report(request,_id):
 
     results=report['results']
     for result in results:
+        result['test']=result['name']
+        #result['information']='foo'
+
         if result['failed']>0:
-            result['status']='fails'
-        elif (result['failed']==0) and (result['passed']==0) and (result['name'] in ['setupModule','teardownModule']):
-            result['status']='passed'
-        elif (result['failed']==0) and (result['passed']>0):
-            result['status']='passed'
+            result['status']='failed'
+            result['information'] = result['fails'][0]['exception']['message']
+            continue
+
+        try:
+            result['skipped']
+        except:
+            pass
         else:
+            print result['skipped_reason']
             result['status']='skipped'
+            result['information'] = result['skipped_reason']
+            continue
+
+        if (result['failed']==0) and (result['passed']>=0):
+            result['status']='passed'
+            continue
+        result['status']='FUCKK'
 
     try:
         request.GET['status']
     except KeyError:
-        status='fails'
+        data['status']='failed'
     else:
         if not request.GET['status'] in ['all','failed','passed','skipped']:
             return HttpResponseForbidden()
-        status=request.GET['status']
+        data['status']=request.GET['status']
 
-    if status=='all':
+
+    if data['status']=='all':
         data['results']=results
     else:
         for result in results:
-            if status == result['status']:
+            if data['status'] == result['status']:
                 data['results'].append(result)
+
     return jingo.render(request, 'display/functional_report.html', data)
 
 

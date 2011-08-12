@@ -103,6 +103,9 @@ def grab_facet_response(query):
     return result 
 
 def parse(query, formatter):
+    #This is dead code
+    raise Exception("parse in queries.py is being used and owen thought it was dead")
+    '''
     h=Http()
     resp, content = h.request('http://10.250.7.224:9200/filter1/doc/_search', "GET", json.dumps(query))
     if resp['status']=='200':
@@ -111,10 +114,10 @@ def parse(query, formatter):
         return facets
     else:
         return {'response':resp['status']}
+    '''
         
 def grabber(query, _id=False):
     h=Http()
-
 
     server=settings.ELASTICSEARCH
     if _id:

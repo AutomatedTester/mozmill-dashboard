@@ -28,10 +28,10 @@
     <h2>Results</h2>
     <p id="filter">
       Filter:
-      <a href="?status=all" id="all">All</a>
-      <a href="?status=passed" id="passed">Passed</a>
-      <a href="?status=failed" id="failed">Failed</a>
-      <a href="?status=skipped" id="skipped">Skipped</a>
+      <a href="?status=all"{% if status =='all' %}class="highlighted"{% endif %}id="all">All</a>
+      <a href="?status=passed" {% if status =='passed' %}class="highlighted"{% endif %}id="passed">Passed</a>
+      <a href="?status=failed"{% if status =='failed' %}class="highlighted"{% endif %}id="failed">Failed</a>
+      <a href="?status=skipped"{% if status =='skipped' %}class="highlighted"{% endif %}id="skipped">Skipped</a>
     </p>
 
     <table id="result">
