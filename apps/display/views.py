@@ -47,7 +47,6 @@ def report(request,_id):
         except:
             pass
         else:
-            print result['skipped_reason']
             result['status']='skipped'
             result['information'] = result['skipped_reason']
             continue
@@ -78,8 +77,8 @@ def report(request,_id):
 
 
 def reporter(request,report_type='all'):
-    oses=["windows nt","mac", "linux"]
-    locales = ['en-US', 'es-ES', 'fr', 'ja-JP-mac', 'zh-TW', 'de', 'ko', 'pl', 'da', 'it']
+    oses=['all',"windows nt","mac", "linux"]
+    locales = ['all','en-US', 'es-ES', 'fr', 'ja-JP-mac', 'zh-TW', 'de', 'ko', 'pl', 'da', 'it']
     foo=reports()
     foo.clear_filters()
  
@@ -95,6 +94,7 @@ def reporter(request,report_type='all'):
         request.GET['from_date']
         request.GET['to_date']
     except KeyError:
+        default_os = 'all'
         pass
     else:
         foo.from_date=request.GET['from_date']

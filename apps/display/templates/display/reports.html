@@ -2,8 +2,42 @@
 
 {% block content %}
 
+<fieldset id="filter">
+      <legend>Filter</legend>
+      <div id="branch-selection">
+        <span>Branch:</span>
+        <span>All</span>
+        <span class="selected">8.0</span>
+        <span>7.0</span>
+        <span>6.0</span>
+        <span>5.0</span>
+        <span>4.0</span>
+        <span>3.6</span>
+      </div>
+      <div id="os-selection">
+        <span>OS: </span>
+        {% for os in operating_systems %}
+        <span>{{os}}</span>
+        {% endfor %}
+        <span class="selected">Windows NT</span>
+      </div>
+      <div id="locale">
+        <span>OS: </span>
+        {% for locale in locales %}
+        <span>{{locale}}</span>
+        {% endfor %}
+      </div>
+      <div id="date">
+        <span>From: </span>
+        <input id="start-date" class="datepicker hasDatepicker" type="text" value="{{from_date}}" size="11">
+        <span>To: </span>
+        <input id="end-date" class="datepicker hasDatepicker" type="text" value="{{to_date}}" size="11">
+      </div>
+    </fieldset>
+
+
 <div>
-Operating System: 
+Oerating System: 
 <form method='get'>
 
 <p>
