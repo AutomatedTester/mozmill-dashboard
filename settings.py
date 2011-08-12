@@ -166,6 +166,7 @@ def JINJA_CONFIG():
 MINIFY_BUNDLES = {
     'css': {
         'example_css': (
+            'css/display/main.css',
             'css/examples/main.css',
         ),
     },
