@@ -29,19 +29,19 @@
       <tbody>
         <tr>
           <th>Status:</th>
-          <td>TODO: PASS/FAIL</td>
+          <td>{{pass_fail}}</td>
         </tr><tr>
           <th>Build (pre):</th>
-          <td>{{user_agent}} ({{locale}}, <a href="{{sourcestamp}}">{{buildid}}</a>) - Snippet: <a href="{{url_aus}}">AUS</a></td>
+          <td>{{pre.user_agent}} ({{pre.locale}}, <a href="{{pre.sourcestamp}}">{{pre.buildid}}</a>) - Snippet: <a href="{{pre.url_aus}}">AUS</a></td>
         </tr><tr>
           <th>Build (post):</th>
-          <td>{{user_agent}} ({{locale}}, <a href="{{sourcestamp}}">{{buildid}}</a>) - Snippet: <a href="{{url_aus}}">AUS</a></td>
+          <td>{{post.user_agent}} ({{post.locale}}, <a href="{{post.sourcestamp}}">{{post.buildid}}</a>) - Snippet: <a href="{{post.url_aus}}">AUS</a></td>
         </tr><tr>
           <th>Channel:</td>
           <td>{{channel}}</td>
         </tr><tr>
           <th>Type:</td>
-          <td>
+          <td>{{type}}, {{complete}}, {{fallback}}
           </td>
         </tr><tr>
           <th>Download:</td>
@@ -72,7 +72,7 @@
       <tbody>
         {% for result in results %}
         <tr class="{{result.status}}">
-          <td>{{results.status}}</td>
+          <td>{{result.status}}</td>
           <td>{{result.filename}}</td>
           <td>{{result.test}}</td>
           <td class="information">
