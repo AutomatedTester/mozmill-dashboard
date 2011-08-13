@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Information</h2>
+    <table id="information" class="clean">
+      <tr>
+       <th>Result ID:</th>
+       <td><a href="http://jsonviewer.stack.hu/#http://mozmill-release.brasstacks.mozilla.com/db/{{id}}">{{id}}</a></td>
+      </tr><tr>
+       <th>Application:</th>
+       <td>{{app_name}} {{app_version}} ({{platform_version}}, {{app_locale}}, {{platform_buildId}})</td>
+      </tr><tr>
+       <th>Sourcestamp:</th>
+       <td><a href="{{app_sourcestamp}}">{{app_sourcestamp}}</a></td>
+      </tr><tr>
+
+        <th>Add-ons:</th>
+        <td>
+          <ul class="addons">
+            <li>Extensions:
+            <ul>
+              {% for extension in extensions %}
+              <li>{{extension.name}} {{extension.version}}
+                ({% if extension.isActive %}<span class="passed">enabled</span>{% else %}<span class="failed">disabled</span>{% endif %},
+                {% if extension.isCompatible %}<span class="passed">compatible</span>{% else %}<span class="failed">incompatible</span>{% endif %})</li>
+              {% else %}
+              <li>None</li>
+              {% endfor %}
+            </ul></li>
+            <li>Themes:
+            <ul>
+              {% for extension in themes%}
+              <li>{{extension.name}} {{extension.version}}
+                ({% if extension.isActive %}<span class="passed">enabled</span>{% else %}<span class="failed">disabled</span>{% endif %},
+                {% if extension.isCompatible %}<span class="passed">compatible</span>{% else %}<span class="failed">incompatible</span>{% endif %})</li>
+              {% else %}
+              <li>None</li>
+              {% endfor %}
+            </ul></li>
+            <li>Plugins:
+            <ul>
+              {% for extension in plugins%}
+              <li>{{extension.name}} {{extension.version}}
+                ({% if extension.isActive %}<span class="passed">enabled</span>{% else %}<span class="failed">disabled</span>{% endif %},
+                {% if extension.isCompatible %}<span class="passed">compatible</span>{% else %}<span class="failed">incompatible</span>{% endif %})</li>
+              {% else %}
+              <li>None</li>
+              {% endfor %}
+
+            </ul></li>
+          </ul>
+        </td>
+      </tr><tr>
+       <th>Platform:</th>
+        <td>{{system}} {{system_version}} {{service_pack}} ({{cpu}})</td>
+      </tr><tr>
+        <th>Duration:</th>
+        <td>{{time_start}} - {{time_end}}</td>
+      </tr><tr>
+        <th>Mozmill:</th>
+        <td>{{mozmill_version}}</td>
+      </tr><tr>
+        <th>Results:</th>
+        <td>Pass: <strong>{{passed}}</strong> / Fail: <strong>{{failed}}</strong> / Skip: <strong>{{skipped}}</strong></td>
+      </tr>
+    </table>
+
+    <h2>Endurance</h2>
+    <table class="clean">
+      <tbody>
+        <tr>
+          <th>Arguments:</th>
+          <td>Delay (s): <strong>{{delay}}</strong> / Iterations: <strong>{{iterations}}</strong> / Micro-iterations: <strong>{{microIterations}}</strong> / Restart: <strong>{% if restart %}Yes{%else%}No{% endif %}</strong></td>
+        </tr><tr>
+          <th>Number of tests:</th>
+          <td>{{testCount}}</td>
+        </tr><tr>
+          <th>Number of checkpoints:</th>
+          <td>{{checkpointCount}} ({{checkpointsPerTest}} per test)
+          </td>
+        </tr>
+        {% if allocated %}
+        <tr>
+          <th>Allocated memory (MB):</th>
+          <td>Minimum: <strong>{{allocated.min}}</strong> / Maximum: <strong>{{allocated.max}}</strong> / Average: <strong>{{allocated.average}}</strong></td>
+        </tr>
+        {% endif %}
+        {% if mapped %}
+        <tr>
+          <th>Mapped memory (MB):</th>
+          <td>Minimum: <strong>{{mapped.min}}</strong> / Maximum: <strong>{{mapped.max}}</strong> / Average: <strong>{{mapped.average}}</strong></td>
+        </tr>
+        {%endif%}
+        {%if explicit %}<tr>
+          <th>Explicit memory (MB):</th>
+          <td>Minimum: <strong>{{explicit.min}}</strong> / Maximum: <strong>{{explicit.max}}</strong> / Average: <strong>{{explicit.average}}</strong></td>
+        </tr>{%endif%}
+        {% if resident %}<tr>
+          <th>Resident memory (MB):</th>
+          <td>Minimum: <strong>{{resident.min}}</strong> / Maximum: <strong>{{resident.max}}</strong> / Average: <strong>{{resident.average}}</strong></td>
+        </tr>{% endif %}
+      </tbody>
+    </table>
+
+
+
+    <h2>Results</h2>
+    <p id="filter">
+      Filter:
+      <a href="?status=all"{% if status =='all' %}class="selected"{% endif %}id="all">All</a>
+      <a href="?status=passed" {% if status =='passed' %}class="selected"{% endif %}id="passed">Passed</a>
+      <a href="?status=failed"{% if status =='failed' %}class="selected"{% endif %}id="failed">Failed</a>
+      <a href="?status=skipped"{% if status =='skipped' %}class="selected"{% endif %}id="skipped">Skipped</a>
+    </p>
+
+    <table id="result">
+      <thead>
+        <th>Status</th>
+        <th>Filename</th>
+        <th>Test</th>
+        <th>Information</th>
+      </thead>
+      <tbody>
+        {% for result in results %}
+        <tr class="{{result.status}}">
+          <td>{{result.status}}</td>
+          <td>{{result.filename}}</td>
+          <td>{{result.test}}</td>
+          <td class="information">
+            {{result.information}}
+            <div class="tooltip">{{result.stack}}<div>
+          </td>
+        </tr>
+        {% else %}
+        <tr id="noresults">
+          <td colspan="4">No results match the current filter.</td>
+        </td>
+        {% endfor %}
+      </tbody>
+    </table>
+
+{% endblock %}

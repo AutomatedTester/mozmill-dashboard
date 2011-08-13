@@ -7,6 +7,8 @@ from django.http import HttpResponse, HttpResponseForbidden
 from display.queries import reports, grab_facet_response, grab_operating_systems, grabber 
 from display.report.utils import parse_results
 
+BYTE_IN_MB=1048576.0
+
 
 def report(request,_id):
     report=grabber('',_id)
@@ -47,11 +49,66 @@ def report(request,_id):
         return jingo.render(request, 'display/report/functional.html', data)
     elif data['report_type']=='firefox-update':
         return update(request,data,report)
+    elif data['report_type']=='firefox-endurance':
+        return endurance(request,data,report)
     else:
         return HttpResponse(data['report_type'])
 
+def endurance(request,data,report):
+
+    data['mozmill_version']=report['mozmill_version']
+    data['app_sourcestamp']=report['platform_repository']+'/rev/'+report['platform_changeset']
+    data['extensions']=[]
+    data['themes']=[]
+    data['plugins']=[]
+    for addon in report['addons']:
+        if addon['type']=='extension':
+            data['extensions'].append(addon)
+        elif addon['type']=='theme':
+            data['themes'].append(addon)
+        elif addon['type']=='plugin':
+            data['plugins'].append(addon)
+
+
+    data['delay']=report['endurance']['delay']
+    data['iterations']=report['endurance']['iterations']
+    data['microIterations']=report['endurance']['micro_iterations']
+    data['restart']=report['endurance']['restart']
+    data['testCount']=len(report['endurance']['results'])
+
+    data['checkpointCount']=0 
+    for result in report['endurance']['results']:
+        for iteration in result['iterations']:
+            data['checkpointCount']+=len(iteration['checkpoints'])
+
+    data['checkpointsPerTest']='https://github.com/highriseo/Mozmill-Dashboard-4.0/issues/7'
+
+    for stattype in ['allocated','mapped','explicit','resident']:
+        try:
+            mem_report=report['endurance']['stats'][stattype]
+        except KeyError:
+            pass
+        else:
+            print stattype
+            data[stattype]={}
+            for stat in ['min','max','average']:
+                data[stattype][stat]=int(round(mem_report[stat]/BYTE_IN_MB))
+
+    
+
+    return jingo.render(request, 'display/report/endurance.html', data)
+
+
 def update(request,data,report):
-    update=report['updates'][0]
+
+    try:
+        update=report['updates'][0]
+    except IndexError:
+        data['update_results']=False
+        return jingo.render(request, 'display/report/update.html', data)
+    else:
+        data['update_results']=True
+
     data['pre']={
         'user_agent':update['build_pre']['user_agent'],
         'locale':update['build_pre']['locale'],
