@@ -13,7 +13,6 @@ def filter_request(request,foo,key,name,options):
     try:
         request.GET[key]
     except:
-        foo='bar'
         return
 
     if request.GET[key]=='all':
@@ -36,7 +35,7 @@ def reporter(request,report_type='all'):
         foo.add_filter_term({"report_type": "firefox-functional"})
     elif report_type=='endurance':
         foo.add_filter_term({"report_type": "firefox-endurance"})
-    elif report_type=='updade':
+    elif report_type=='update':
         foo.add_filter_term({"report_type": "firefox-update"})
 
     #Adds filters based on get paramaters for elastic search
