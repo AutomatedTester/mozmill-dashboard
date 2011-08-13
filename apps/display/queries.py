@@ -78,6 +78,8 @@ class reports:
                 'build':hit['platform_buildid'],
                 'locale':hit['application_locale'],
                 'cpu':hit['system_info']['processor'],
+                'platform':hit['system_info']['system'],
+                'platform_version':hit['system_info']['version'],
                 'pass':hit['tests_passed'],
                 'skip':hit['tests_skipped'],
                 'fail':hit['tests_failed'],
@@ -128,6 +130,7 @@ def grabber(query, _id=False):
     if resp['status']=='200':
         return json.loads(content)
         #return facets
-    else:#TODO: Should maybe throw an exeption on this guy
-        raise
+    else:#TODO: Should maybe throw a real exeption on this guy
+        raise Exception("Elasticsearch hates you (and your children)")
+
         return {'response':resp['status']}

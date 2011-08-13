@@ -1,11 +1,11 @@
-{% extends "example_base.html" %}
+{% extends "base.html" %}
 
 {% block content %}
 
 <fieldset id="filter">
       <legend>Filter</legend>
-      <div id="branch-selection">
-        <span>Branch:</span>
+      <div id="branch">
+        <label>Branch:</label>
         <span>All</span>
         <span class="selected">8.0</span>
         <span>7.0</span>
@@ -14,67 +14,56 @@
         <span>4.0</span>
         <span>3.6</span>
       </div>
-      <div id="os-selection">
-        <span>OS: </span>
+      <div id="os">
+        <label>OS: </label>
         {% for os in operating_systems %}
-        <span>{{os}}</span>
+        <span {% if os==current_os %}class="selected"{% endif %}>{{os}}</span>
         {% endfor %}
-        <span class="selected">Windows NT</span>
       </div>
       <div id="locale">
-        <span>OS: </span>
+        <label>Locale: </label>
         {% for locale in locales %}
-        <span>{{locale}}</span>
+        <span  {% if locale==current_locale%}class="selected"{% endif %}>{{locale}}</span>
         {% endfor %}
       </div>
       <div id="date">
-        <span>From: </span>
+        <label>From: </label>
         <input id="start-date" class="datepicker hasDatepicker" type="text" value="{{from_date}}" size="11">
-        <span>To: </span>
+        <label>To: </label>
         <input id="end-date" class="datepicker hasDatepicker" type="text" value="{{to_date}}" size="11">
+		<a href='' class="submitter">Submit</a>
       </div>
     </fieldset>
 
-
-<div>
-Oerating System: 
-<form method='get'>
-
-<p>
-<input type="radio" name="os" value="all" checked/>All
-{% for os in operating_systems %}
-<input type="radio" name="os" value="{{os}}"/>{{os}}
-{% endfor %}
-</p>
-
-<p>
-<input type="radio" label="all" name="locale" value="all" checked/>All
-{% for locale in locales %}
-<input type="radio" name="locale" value="{{locale}}"/>{{locale}}
-{% endfor %}
-</p>
-
-<p>
-<input type="text" name="from_date" value="{{from_date}}"/>
-<input type="text" name="to_date" value="{{to_date}}"/>
-</p>
-
-<input type="submit"/>
-</form>
-</div>
-
+<h2 class='title'> Reports for {{report_type}} tests</h2>
 <div id="results">
 <table>
+  <thead>
+  <tr>
+    <td class='header'>Date</td>
+    <td class='header'>Version</td>
+    <td class='header'>Build</td>
+    <td class='header'>Locale</td>
+    <td class='header'>Platform</td>
+    <td class='header'>Version</td>
+    <td class='header'>CPU</td>
+    <td class='header'>Pass</td>
+    <td class='header'>Skip</td>
+    <td class='header'>Fail</td>
+  </tr>
+  </thead>
 {% for report in reports %}
   <tr>
-    <td><a href ="/report/{{report.id}}">{{report.date}}</a><td>
-    <td>{{report.version}}<td>
-    <td>{{report.build}}<td>
-    <td>{{report.locale}}<td>
-    <td>{{report.cpu}}<td>
-    <td>{{report.pass}}<td>
-    <td>{{report.skip}}<td>
-    <td>{{report.fail}}<td>
+    <td><a href ="/report/{{report.id}}">{{report.date}}</a></td>
+    <td>{{report.version}}</td>
+    <td>{{report.build}}</td>
+    <td>{{report.locale}}</td>
+    <td>{{report.platform}}</td>
+    <td>{{report.platform_version}}</td>
+    <td>{{report.cpu}}</td>
+    <td>{{report.pass}}</td>
+    <td>{{report.skip}}</td>
+    <td>{{report.fail}}</td>
 </tr>
 {% endfor %}
 </table>

@@ -27,7 +27,7 @@
 
     <h2>Results</h2>
     <p id="filter">
-      FUCK THIS:
+      Filter:
       <a href="?status=all"{% if status =='all' %}class="selected"{% endif %}id="all">All</a>
       <a href="?status=passed" {% if status =='passed' %}class="selected"{% endif %}id="passed">Passed</a>
       <a href="?status=failed"{% if status =='failed' %}class="selected"{% endif %}id="failed">Failed</a>
@@ -44,7 +44,7 @@
       <tbody>
         {% for result in results %}
         <tr class="{{result.status}}">
-          <td>{{results.status}}</td>
+          <td>{{result.status}}</td>
           <td>{{result.filename}}</td>
           <td>{{result.test}}</td>
           <td class="information">

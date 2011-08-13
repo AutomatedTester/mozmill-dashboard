@@ -9,9 +9,43 @@ from display.queries import reports, grab_facet_response, grab_operating_systems
 def hello_world(request):
     return HttpResponse('Hello World')
 
+def parse_results(tests,filter_value):
+    results = []
+    for test in tests:
+        result = {}
+        result['test']=test['name']
+        result['filename']=test['filename']
+
+        #the following is an algorithm to parse out the status and information field. It also filters the results. Good luck.
+        if (test['failed']>0) and (filter_value in ['failed','all']):
+            result['status']='failed'
+            print result['status']
+            result['information'] = test['fails'][0]['exception']['message']
+            results.append(result)
+            continue
+
+        try:
+            test['skipped']
+        except:
+            pass
+        else:
+            result['status']='skipped'
+            result['information'] = test['skipped_reason']
+            if filter_value in ['skipped','all']:
+                results.append(result)
+            continue
+
+        #make sure that we have the right amount of passes and failes and make sure that there is a filter that allows for passes
+        if (test['failed']==0) and (test['passed']>=0) and (filter_value in ['passed','all']):
+            result['status']='passed'
+            results.append(result)
+            continue
+    return results
+
 def report(request,_id):
-    report=grabber('',_id)#['_source']
+    report=grabber('',_id)
     report = report['_source']
+    results = []
     data = {
         "id":_id,
         "app_name":report['application_name'],
@@ -32,30 +66,8 @@ def report(request,_id):
         'results':[],
     }
 
-    results=report['results']
-    for result in results:
-        result['test']=result['name']
-        #result['information']='foo'
 
-        if result['failed']>0:
-            result['status']='failed'
-            result['information'] = result['fails'][0]['exception']['message']
-            continue
-
-        try:
-            result['skipped']
-        except:
-            pass
-        else:
-            result['status']='skipped'
-            result['information'] = result['skipped_reason']
-            continue
-
-        if (result['failed']==0) and (result['passed']>=0):
-            result['status']='passed'
-            continue
-        result['status']='FUCKK'
-
+    #Figure out weather we should filter for all, failed, passed or skipped
     try:
         request.GET['status']
     except KeyError:
@@ -65,15 +77,29 @@ def report(request,_id):
             return HttpResponseForbidden()
         data['status']=request.GET['status']
 
+    data['results'] = parse_results(report['results'],data['status'])
 
-    if data['status']=='all':
-        data['results']=results
+    return jingo.render(request, 'display/report/functional.html', data)
+
+
+##This is a function to deal with adding filters to elastic search in a less general way but without code duplication in the view code
+#The name parameter is whatever mozmill decides to call it. the Key is what it is in the request object
+def filter_request(request,foo,key,name,options):
+    #foo
+    try:
+        request.GET[key]
+    except:
+        foo='bar'
+        return
+
+    if request.GET[key]=='all':
+		return
+
+    if request.GET[key] in options:
+        foo.add_filter_term({name:request.GET[key]})
     else:
-        for result in results:
-            if data['status'] == result['status']:
-                data['results'].append(result)
+		raise
 
-    return jingo.render(request, 'display/functional_report.html', data)
 
 
 def reporter(request,report_type='all'):
@@ -88,21 +114,20 @@ def reporter(request,report_type='all'):
         foo.add_filter_term({"report_type": "firefox-endurance"})
     elif report_type=='updade':
         foo.add_filter_term({"report_type": "firefox-update"})
+
+    #Adds filters based on get paramaters for elastic search
+    filter_request(request,foo,'os','system',oses)
+    filter_request(request,foo,'locale','application_locale',locales)
+
+    ##If the dates have been set by the request use them, otherwise use the default
     try:
-        request.GET['os']
-        request.GET['locale']
         request.GET['from_date']
         request.GET['to_date']
     except KeyError:
-        default_os = 'all'
         pass
     else:
         foo.from_date=request.GET['from_date']
         foo.to_date=request.GET['to_date']
-        if request.GET['os'] in oses:
-            foo.add_filter_term({'system':request.GET['os']})
-        if request.GET['locale'] in locales:
-            foo.add_filter_term({'application_locale':request.GET['locale']})
 
     data = {
         'reports':foo.return_reports(),
@@ -110,6 +135,9 @@ def reporter(request,report_type='all'):
         'locales':locales,
         'from_date':foo.from_date,
         'to_date':foo.to_date,
+        'current_os':request.GET.get('os','all'),
+        'current_locale':request.GET.get('locale','all'),
+        'report_type': report_type
     }
     return jingo.render(request, 'display/reports.html', data)
 
