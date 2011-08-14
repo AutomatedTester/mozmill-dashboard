@@ -92,24 +92,30 @@ def endurance(request,data,report):
             for stat in ['min','max','average']:
                 data[stattype][stat]=int(round(mem_report[stat]/BYTE_IN_MB))
 
-    data['testresult']={}
+    data['testresult']=[]
     for stattype in ['allocated','mapped','explicit','resident']:
-        data['testresult'][stattype]=[]
-        for test in report['endurance']['results']:
-            try:
-                test['stats'][stattype]
-            except KeyError:
-                continue
-            else:
-                print 'continue!!!11one'
-                data['testresult'][stattype].append({
+        #See if this statype exists in the data (this assumes that if it exists in the first it will exist in all)
+        try:
+            report['endurance']['results'][0]['stats'][stattype]
+        except KeyError:
+            continue
+        else:
+            #If so, create an array to be rendered and start adding to it
+            series_object= {}
+            series_object['points']=[]
+            series_object['name']=stattype #This song and dance is to allow for a DRY template
+            for test in report['endurance']['results']:
+                series_object['points'].append({
                     'memory':int(round(test['stats'][stattype]['average']/BYTE_IN_MB)),
                     'testFile':test['testFile'],
                     'testMethod':test['testMethod'],
                 })
 
+            data['testresult'].append(series_object)
+
     print 'starting test'
-    for test in data['testresult']['explicit']:
+    data['testresult'][0]['name']
+    for test in data['testresult'][0]['points']:
         print test    
 
     return jingo.render(request, 'display/report/endurance.html', data)

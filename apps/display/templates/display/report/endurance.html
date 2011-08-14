@@ -202,17 +202,21 @@
                     pointStart: 1
                     }
             },
-            series: [{
-                name: 'Allocated',
-                data: [
-                {%for test in testresult.explicit%}
-                  {
-                    name: "<strong>File:</strong> {{test.testFile}}<br/><strong>Method:</strong> {{test.testMethod}}",
-                    y: {{test.memory}}
-                  },
-               {% endfor %}
-                ]
-            }],
+            series: [
+                {% for series_type in testresult %}
+                {
+                    name: '{{series_type.name}}',
+                    data: [
+                    {%for point in series_type.points%}
+                        {
+                          name: "<strong>File:</strong> {{point.testFile}}<br/><strong>Method:</strong> {{point.testMethod}}",
+                          y: {{point.memory}}
+                        },
+                   {% endfor %}
+                   ]
+                },
+                {% endfor %}
+            ],
             title: {
                 text: 'Memory Usage (TBD: testCount}} tests)'
             },
