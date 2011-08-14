@@ -174,6 +174,7 @@ MINIFY_BUNDLES = {
         'example_js': (
             'js/libs/jquery-1.4.4.min.js',
             'js/display/filter.js',
+            'js/display/highcharts.js',
         ),
     }
 }

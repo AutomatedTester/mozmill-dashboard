@@ -55,7 +55,6 @@ def report(request,_id):
         return HttpResponse(data['report_type'])
 
 def endurance(request,data,report):
-
     data['mozmill_version']=report['mozmill_version']
     data['app_sourcestamp']=report['platform_repository']+'/rev/'+report['platform_changeset']
     data['extensions']=[]
@@ -89,12 +88,29 @@ def endurance(request,data,report):
         except KeyError:
             pass
         else:
-            print stattype
             data[stattype]={}
             for stat in ['min','max','average']:
                 data[stattype][stat]=int(round(mem_report[stat]/BYTE_IN_MB))
 
-    
+    data['testresult']={}
+    for stattype in ['allocated','mapped','explicit','resident']:
+        data['testresult'][stattype]=[]
+        for test in report['endurance']['results']:
+            try:
+                test['stats'][stattype]
+            except KeyError:
+                continue
+            else:
+                print 'continue!!!11one'
+                data['testresult'][stattype].append({
+                    'memory':int(round(test['stats'][stattype]['average']/BYTE_IN_MB)),
+                    'testFile':test['testFile'],
+                    'testMethod':test['testMethod'],
+                })
+
+    print 'starting test'
+    for test in data['testresult']['explicit']:
+        print test    
 
     return jingo.render(request, 'display/report/endurance.html', data)
 

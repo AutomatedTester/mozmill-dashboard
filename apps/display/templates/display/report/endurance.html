@@ -102,7 +102,145 @@
       </tbody>
     </table>
 
+    <script>
+        {% raw %} /*
+        chart1 = new Highcharts.Chart({
+            chart: {
+                borderColor: '#AAAAAA',
+                borderRadius: 10,
+                borderWidth: 1,
+                renderTo: 'checkpoints-memory-usage-chart',
+                defaultSeriesType: 'line'
+            },
+            credits: {
+                enabled: false
+            },
+            plotOptions: {
+                line: {
+                    marker: {
+                        enabled: false
+                    }
+                },
+                series: {
+                    pointStart: 1
+                    }
+            },
+            series: [{
+                name: 'Allocated',
+                data: [{% for checkpoint in checkpoints %}{
+                    name: "<strong>File:</strong> {{testFile}}<br/><strong>Method:</strong> {{testMethod}}<br/><strong>Checkpoint:</strong> {{label}}",
+                    y: {{#memory}}{{allocated}}{{^allocated}}""{{/allocated}}{{/memory}}
+                },{{/checkpoints}}]
+            }, {
+{% raw %}
+                name: 'Mapped',
+                data: [{{#checkpoints}}{
+                    name: "<strong>File:</strong> {{testFile}}<br/><strong>Method:</strong> {{testMethod}}<br/><strong>Checkpoint:</strong> {{label}}",
+                    y: {{#memory}}{{mapped}}{{^mapped}}""{{/mapped}}{{/memory}}
+                },{{/checkpoints}}]
+            }, {
+                name: 'Explicit',
+                data: [{{#checkpoints}}{
+                    name: "<strong>File:</strong> {{testFile}}<br/><strong>Method:</strong> {{testMethod}}<br/><strong>Checkpoint:</strong> {{label}}",
+                    y: {{#memory}}{{explicit}}{{^explicit}}""{{/explicit}}{{/memory}}
+                },{{/checkpoints}}]
+            }, {
+                name: 'Resident',
+                data: [{{#checkpoints}}{
+                    name: "<strong>File:</strong> {{testFile}}<br/><strong>Method:</strong> {{testMethod}}<br/><strong>Checkpoint:</strong> {{label}}",
+                    y: {{#memory}}{{resident}}{{^resident}}""{{/resident}}{{/memory}}
+                },{{/checkpoints}}]
+            }],
+            title: {
+                text: 'Memory Usage (' + {{checkpointCount}} + ' checkpoints)'
+            },
+            tooltip: {
+                formatter: function() {
+                    return this.point.name + '<br/>' +
+                        '<strong>' + this.series.name + ' memory: </strong>' + this.y + ' MB';
+                }
+            },
+            xAxis: {
+                allowDecimals: false,
+                gridLineWidth: 1,
+                title: {
+                    text: 'Checkpoints'
+                },
+                labels: {
+                    enabled: false
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Memory Usage (MB)'
+                },
+                min: 0
+            },
+        });
+        {% endraw %}*/
 
+        //TODO: If stats available
+     $(document).ready(function() {
+        chart1 = new Highcharts.Chart({
+            chart: {
+                borderColor: '#AAAAAA',
+                borderRadius: 10,
+                borderWidth: 1,
+                renderTo: 'tests-memory-usage-chart',
+                defaultSeriesType: 'line'
+            },
+            credits: {
+                enabled: false
+            },
+            plotOptions: {
+                line: {
+                    marker: {
+                        enabled: false
+                    }
+                },
+                series: {
+                    pointStart: 1
+                    }
+            },
+            series: [{
+                name: 'Allocated',
+                data: [
+                {%for test in testresult.explicit%}
+                  {
+                    name: "<strong>File:</strong> {{test.testFile}}<br/><strong>Method:</strong> {{test.testMethod}}",
+                    y: {{test.memory}}
+                  },
+               {% endfor %}
+                ]
+            }],
+            title: {
+                text: 'Memory Usage (TBD: testCount}} tests)'
+            },
+            tooltip: {
+                formatter: function() {
+                    return this.point.name + '<br/>' +
+                        '<strong>' + this.series.name + ' memory: </strong>' + this.y + ' MB';
+                }
+            },
+            xAxis: {
+                allowDecimals: false,
+                gridLineWidth: 1,
+                title: {
+                    text: 'Tests'
+                },
+            },
+            yAxis: {
+                title: {
+                    text: 'Memory Usage (MB)'
+                },
+                min: 0
+            }
+        });
+     });
+    </script>
+
+    <div id="checkpoints-memory-usage-chart" class="chart" style="float:left"></div>
+    <div id="tests-memory-usage-chart" class="chart"></div>
 
     <h2>Results</h2>
     <p id="filter">
