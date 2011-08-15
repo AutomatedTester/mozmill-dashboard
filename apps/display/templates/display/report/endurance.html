@@ -230,6 +230,59 @@
     <div id="checkpoints-memory-usage-chart" class="chart" style="float:left"></div>
     <div id="tests-memory-usage-chart" class="chart"></div>
 
+
+    {% if testresult_table %}
+    <table id="endurance_result">
+      <thead>
+        <tr>
+          <th rowspan="2">Filename</th>
+          <th rowspan="2">Test</th>
+              {% if testresult_table.allocated %}<th colspan="3">Allocated Memory (MB)</th>{% endif %}
+              {% if testresult_table.mapped %}<th colspan="3">Mapped Memory (MB)</th>{% endif %}
+              {% if testresult_table.explicit%}<th colspan="3">Explicit Memory (MB)</th>{%endif%}
+              {% if testresult_table.resident %}<th colspan="3">Resident Memory (MB)</th>{% endif %}
+        </tr>
+          <tr>
+            <th>min</th>
+            <th>max</th>
+            <th>average</th>
+            <th>min</th>
+            <th>max</th>
+            <th>average</th>
+          </tr>
+        </tr>
+      </thead>
+      <tbody>
+        {%for test in testresult_table.tests %}
+        <tr>
+          <td>{{test.testFile}}</td>
+          <td>{{test.testMethod}}</td>
+            {% if test.allocated %}
+              <td class="results">{{test.min}}</td>
+              <td class="results">{{test.max}}</td>
+              <td class="results">{{test.average}}</td>
+            {% endif %}
+            {%if test.mapped %}
+              <td class="results">{{test.min}}</td>
+              <td class="results">{{test.max}}</td>
+              <td class="results">{{test.average}}</td>
+            {% endif %}
+            {% if explicit %}
+              <td class="results">{{test.min}}</td>
+              <td class="results">{{test.max}}</td>
+              <td class="results">{{test.average}}</td>
+            {% endif %}
+            {% if resident %}
+              <td class="results">{{test.min}}</td>
+              <td class="results">{{test.max}}</td>
+              <td class="results">{{test.average}}</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+
     <h2>Results</h2>
     <p id="filter">
       Filter:

@@ -9,6 +9,10 @@ from display.report.utils import parse_results
 
 BYTE_IN_MB=1048576.0
 
+def mb_convert(byte):
+    return int(round(byte/BYTE_IN_MB))
+
+
 
 def report(request,_id):
     report=grabber('',_id)
@@ -134,10 +138,29 @@ def endurance(request,data,report):
 
             data['testresult'].append(series_object)
 
-    print 'starting test'
-    data['testresult'][0]['name']
-    for test in data['testresult'][0]['points']:
-        print test    
+
+    data['testresult_table']={}
+    data['testresult_table']['tests']=[]
+    for result in report['endurance']['results']:
+        for stattype in ['allocated','mapped','explicit','resident']:
+            try:
+                result['stats'][stattype]
+            except:
+                continue
+            else:
+                data['testresult_table'][stattype]=True
+                data['testresult_table']['tests'].append({
+                    stattype:True,
+                    'min':mb_convert(result['stats'][stattype]['min']),
+                    'max':mb_convert(result['stats'][stattype]['max']),
+                    'average':mb_convert(result['stats'][stattype]['average']),
+                    'testFile':result['testFile'],
+                    'testMethod':result['testMethod'],
+                })
+
+
+                
+
 
     return jingo.render(request, 'display/report/endurance.html', data)
 
