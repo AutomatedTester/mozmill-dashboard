@@ -92,6 +92,27 @@ def endurance(request,data,report):
             for stat in ['min','max','average']:
                 data[stattype][stat]=int(round(mem_report[stat]/BYTE_IN_MB))
 
+    data['memresult']={}
+    for stattype in ['allocated','mapped','explicit','resident']:
+        data['memresult'][stattype]=[]
+
+    for result in report['endurance']['results']:
+        for iteration in result['iterations']:
+            for checkpoint in iteration['checkpoints']:
+                for stattype in ['allocated','mapped','explicit','resident']:
+                    try:
+                        checkpoint[stattype]
+                    except:
+                        pass
+                    else:
+                        data['memresult'][stattype].append({
+                            'memory':int(round(checkpoint[stattype]/BYTE_IN_MB)),
+                            'testFile':result['testFile'],
+                            'testMethod':result['testMethod'],
+                        })
+
+                pass
+
     data['testresult']=[]
     for stattype in ['allocated','mapped','explicit','resident']:
         #See if this statype exists in the data (this assumes that if it exists in the first it will exist in all)

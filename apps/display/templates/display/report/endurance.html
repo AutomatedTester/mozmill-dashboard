@@ -103,7 +103,23 @@
     </table>
 
     <script>
-        {% raw %} /*
+    {% macro series(series_name, points) -%}
+    {% if points %}
+        {
+            name: '{{series_name}}',
+            data: [
+               {%for point in points%}
+                   {
+                       name: "<strong>File:</strong> {{point.testFile}}<br/><strong>Method:</strong> {{point.testMethod}}",
+                       y: {{point.memory}}
+                   },
+               {% endfor %}
+           ]
+        },
+    {% endif %}
+    {%- endmacro %}
+
+     $(document).ready(function() {
         chart1 = new Highcharts.Chart({
             chart: {
                 borderColor: '#AAAAAA',
@@ -125,32 +141,12 @@
                     pointStart: 1
                     }
             },
-            series: [{
-                name: 'Allocated',
-                data: [{% for checkpoint in checkpoints %}{
-                    name: "<strong>File:</strong> {{testFile}}<br/><strong>Method:</strong> {{testMethod}}<br/><strong>Checkpoint:</strong> {{label}}",
-                    y: {{#memory}}{{allocated}}{{^allocated}}""{{/allocated}}{{/memory}}
-                },{{/checkpoints}}]
-            }, {
-{% raw %}
-                name: 'Mapped',
-                data: [{{#checkpoints}}{
-                    name: "<strong>File:</strong> {{testFile}}<br/><strong>Method:</strong> {{testMethod}}<br/><strong>Checkpoint:</strong> {{label}}",
-                    y: {{#memory}}{{mapped}}{{^mapped}}""{{/mapped}}{{/memory}}
-                },{{/checkpoints}}]
-            }, {
-                name: 'Explicit',
-                data: [{{#checkpoints}}{
-                    name: "<strong>File:</strong> {{testFile}}<br/><strong>Method:</strong> {{testMethod}}<br/><strong>Checkpoint:</strong> {{label}}",
-                    y: {{#memory}}{{explicit}}{{^explicit}}""{{/explicit}}{{/memory}}
-                },{{/checkpoints}}]
-            }, {
-                name: 'Resident',
-                data: [{{#checkpoints}}{
-                    name: "<strong>File:</strong> {{testFile}}<br/><strong>Method:</strong> {{testMethod}}<br/><strong>Checkpoint:</strong> {{label}}",
-                    y: {{#memory}}{{resident}}{{^resident}}""{{/resident}}{{/memory}}
-                },{{/checkpoints}}]
-            }],
+            series: [
+                {{ series("allocated", memresult.allocated) }}
+                {{ series("mapped", memresult.mapped) }}
+                {{ series("explicit", memresult.explicit) }}
+                {{ series("resident", memresult.resident) }}
+            ],
             title: {
                 text: 'Memory Usage (' + {{checkpointCount}} + ' checkpoints)'
             },
@@ -177,10 +173,8 @@
                 min: 0
             },
         });
-        {% endraw %}*/
 
         //TODO: If stats available
-     $(document).ready(function() {
         chart1 = new Highcharts.Chart({
             chart: {
                 borderColor: '#AAAAAA',
@@ -204,17 +198,7 @@
             },
             series: [
                 {% for series_type in testresult %}
-                {
-                    name: '{{series_type.name}}',
-                    data: [
-                    {%for point in series_type.points%}
-                        {
-                          name: "<strong>File:</strong> {{point.testFile}}<br/><strong>Method:</strong> {{point.testMethod}}",
-                          y: {{point.memory}}
-                        },
-                   {% endfor %}
-                   ]
-                },
+                     {{series(series_type.name,series_type.points)}}
                 {% endfor %}
             ],
             title: {
