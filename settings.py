@@ -169,18 +169,23 @@ MINIFY_BUNDLES = {
             'css/display/main.css',
             'css/display/header.css',
         ),
+        'datatables': (
+            'css/datatables/demo_table.css',
+            'css/datatables/demo_page.css',
+        ),
     },
     'js': {
         'report_js': (
-            'js/libs/jquery-1.4.4.min.js',
+            'js/libs/jquery.min.js',
             'js/display/report/filter.js',
         ),
         'highcharts_js': (
             'js/libs/highcharts.js',
         ),
         'reports_js': (
-            'js/libs/jquery-1.4.4.min.js',
-            'js/display/data_tabler.js',
+            'js/libs/jquery.min.js',
+            'js/libs/jquery.dataTables.min.js',
+            'js/display/reports/dataTabler.js',
         ),
     }
 }
