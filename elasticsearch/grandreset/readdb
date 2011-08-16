@@ -28,7 +28,7 @@ def turnaround(serial_number):
 
 
 def parse():
-    f = open('docs.json', 'r')
+    f = open('_all_docs', 'r')
     doc_list = json.loads(f.read())
     pool = Pool(processes=20)
 

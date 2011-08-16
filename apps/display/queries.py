@@ -33,7 +33,7 @@ class reports:
 
     def __init__(self):
         today = datetime.date.today()
-        delta = datetime.timedelta(days=-3)
+        delta = datetime.timedelta(days=-15)
         three_ago = today+delta
 
         self.to_date = format_date(today)

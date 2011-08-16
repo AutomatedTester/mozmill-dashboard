@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 
+{% block site_js %}
+  {{ js('report_js') }}
+  {{ js('highcharts_js') }}
+{% endblock %}
+
 {% block content %}
 
 {% include "display/report/basicInfo.html" %} 

@@ -165,16 +165,22 @@ def JINJA_CONFIG():
 # and js files that can be bundled together by the minify app.
 MINIFY_BUNDLES = {
     'css': {
-        'example_css': (
+        'site_css': (
             'css/display/main.css',
             'css/display/header.css',
         ),
     },
     'js': {
-        'example_js': (
+        'report_js': (
             'js/libs/jquery-1.4.4.min.js',
-            'js/display/filter.js',
-            'js/display/highcharts.js',
+            'js/display/report/filter.js',
+        ),
+        'highcharts_js': (
+            'js/libs/highcharts.js',
+        ),
+        'reports_js': (
+            'js/libs/jquery-1.4.4.min.js',
+            'js/display/data_tabler.js',
         ),
     }
 }
