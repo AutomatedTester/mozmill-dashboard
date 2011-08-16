@@ -122,7 +122,7 @@ def endurance(request,data,report):
         #See if this statype exists in the data (this assumes that if it exists in the first it will exist in all)
         try:
             report['endurance']['results'][0]['stats'][stattype]
-        except KeyError:
+        except (IndexError, KeyError):
             continue
         else:
             #If so, create an array to be rendered and start adding to it
