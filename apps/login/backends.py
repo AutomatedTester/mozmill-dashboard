@@ -16,7 +16,7 @@ class BrowserIdBackend(object):
         #TODO Host should probably be grabbed from somewhere more intelegent. Right now the computer thinks that host is "horse" which is understandable but will need to change
         qs = urllib.urlencode({'assertion': assertion,
                                'audience': '%s:%s' % (host, port)})
-
+        print qs
         # TODO: this won't verify the server cert, because Python is
         # odd. For more info, see: 
         #

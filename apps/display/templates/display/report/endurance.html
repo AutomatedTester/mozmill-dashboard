@@ -10,10 +10,11 @@
        <th>Application:</th>
        <td>{{app_name}} {{app_version}} ({{platform_version}}, {{app_locale}}, {{platform_buildId}})</td>
       </tr><tr>
-       <th>Sourcestamp:</th>
+       <th>Sourcestamp:{% include basicInfo.html %} </th>
        <td><a href="{{app_sourcestamp}}">{{app_sourcestamp}}</a></td>
-      </tr><tr>
-
+      </tr>
+      {% if extentions %}
+      <tr>
         <th>Add-ons:</th>
         <td>
           <ul class="addons">
@@ -50,7 +51,9 @@
             </ul></li>
           </ul>
         </td>
-      </tr><tr>
+      </tr>
+      {% endif %}
+      <tr>
        <th>Platform:</th>
         <td>{{system}} {{system_version}} {{service_pack}} ({{cpu}})</td>
       </tr><tr>

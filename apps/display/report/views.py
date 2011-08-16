@@ -56,7 +56,7 @@ def report(request,_id):
     elif data['report_type']=='firefox-endurance':
         return endurance(request,data,report)
     else:
-        return HttpResponse(data['report_type'])
+        return HttpResponse(data['report_type']+" report view not implemented ... yet")
 
 def endurance(request,data,report):
     data['mozmill_version']=report['mozmill_version']
