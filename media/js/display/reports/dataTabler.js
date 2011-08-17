@@ -1,3 +1,10 @@
 $(document).ready(function() {
-	$('#example>table').dataTable();
+	$('#dt_example').dataTable( {
+		"bPaginate": false,
+		"bLengthChange": true,
+		"bFilter": false,
+		"bSort": true,
+		"bInfo": false,
+		"bAutoWidth": false,
+	} );
 } );

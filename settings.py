@@ -172,6 +172,7 @@ MINIFY_BUNDLES = {
         'datatables': (
             'css/datatables/demo_table.css',
             'css/datatables/demo_page.css',
+            'css/datatables/demo_table_jui.css',
         ),
     },
     'js': {
@@ -184,6 +185,7 @@ MINIFY_BUNDLES = {
         ),
         'reports_js': (
             'js/libs/jquery.min.js',
+            'js/display/report/filter.js',
             'js/libs/jquery.dataTables.min.js',
             'js/display/reports/dataTabler.js',
         ),

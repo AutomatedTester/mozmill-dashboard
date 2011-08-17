@@ -36,20 +36,20 @@
     </fieldset>
 
 <h2 class='title'> Reports for {{report_type}} tests</h2>
-<div id="example">
-<table>
+<div id="results">
+<table id="dt_example" class="display" cellpadding="0" cellspacing="0" border="0">
   <thead>
   <tr>
-    <td class='header'>Date</td>
-    <td class='header'>Version</td>
-    <td class='header'>Build</td>
-    <td class='header'>Locale</td>
-    <td class='header'>Platform</td>
-    <td class='header'>Version</td>
-    <td class='header'>CPU</td>
-    <td class='header'>Pass</td>
-    <td class='header'>Skip</td>
-    <td class='header'>Fail</td>
+    <th class='header'>Date</th>
+    <th class='header'>Version</th>
+    <th class='header'>Build</th>
+    <th class='header'>Locale</th>
+    <th class='header'>Platform</th>
+    <th class='header'>Version</th>
+    <th class='header'>CPU</th>
+    <th class='header'>Pass</th>
+    <th class='header'>Skip</th>
+    <th class='header'>Fail</th>
   </tr>
   </thead>
 {% for report in reports %}

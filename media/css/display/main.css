@@ -131,6 +131,15 @@ div.avatar img {
   list-style: none;
 }
 
+#results {
+  //-moz-border-radius: 10px;
+  border-radius: 10px;
+  background-color: #fff;
+  padding: 5px;
+  border: 1px solid #aaa;
+}
+  
+/*
 table {
   margin-bottom: 20px;
   border: 1px solid #aaa;
@@ -230,7 +239,7 @@ th.header {
   padding-left: 20px;
   border-right: 1px solid #dad9c7;
   margin-left: -1px;
-}
+}*/
 
 span.selected {
   background-color: #555;

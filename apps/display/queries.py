@@ -10,7 +10,7 @@ def format_date(date):
 
 class reports:
     query = {
-        "size":100,
+        "size":50,
         "query": {
             "bool":{
                 "must" : [
