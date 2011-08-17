@@ -5,24 +5,10 @@ from django import http
 from django.http import HttpResponse, HttpResponseForbidden
 
 from display.queries import reports, grab_facet_response, grab_operating_systems, grabber 
+from display.utils import filter_request
 
 ##This is a function to deal with adding filters to elastic search in a less general way but without code duplication in the view code
 #The name parameter is whatever mozmill decides to call it. the Key is what it is in the request object
-def filter_request(request,foo,key,name,options):
-    #foo
-    try:
-        request.GET[key]
-    except:
-        return
-
-    if request.GET[key]=='all':
-		return
-
-    if request.GET[key] in options:
-        foo.add_filter_term({name:request.GET[key]})
-    else:
-		raise
-
 
 
 def reporter(request,report_type='all'):
@@ -62,7 +48,18 @@ def reporter(request,report_type='all'):
         'current_locale':request.GET.get('locale','all'),
         'report_type': report_type
     }
-    return jingo.render(request, 'display/reports.html', data)
+
+    if report_type == 'all':
+        return jingo.render(request, 'display/reports.html', data)
+    elif report_type == 'functional':
+        return jingo.render(request, 'display/reports.html', data)
+    elif report_type == 'endurance':
+        return HttpResponse("GAH NO ENDURACE")
+    elif report_type == 'update':
+        return update(request,data)
+
+def update(request,data):
+        return jingo.render(request, 'display/updateReports.html',data)
 
 
 

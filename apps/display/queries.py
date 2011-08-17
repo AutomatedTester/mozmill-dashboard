@@ -33,7 +33,7 @@ class reports:
 
     def __init__(self):
         today = datetime.date.today()
-        delta = datetime.timedelta(days=-15)
+        delta = datetime.timedelta(days=-3)
         three_ago = today+delta
 
         self.to_date = format_date(today)
@@ -85,6 +85,14 @@ class reports:
                 'fail':hit['tests_failed'],
                 'id':hit['_id'],
             }
+            try:
+                result['preVersion']=hit['updates'][0]['build_pre']['version']
+                result['postVersion']=hit['updates'][0]['build_pre']['version']
+            except (IndexError, KeyError):
+                result['preVersion']='NA'
+                result['postVersion']='NA'
+
+
             results.append(result)
 
         return results
