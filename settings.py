@@ -165,11 +165,14 @@ def JINJA_CONFIG():
 # and js files that can be bundled together by the minify app.
 MINIFY_BUNDLES = {
     'css': {
-        'site_css': (
+        'report': (
             'css/display/main.css',
             'css/display/header.css',
+            'css/display/table.css',
         ),
-        'datatables': (
+        'reports': (
+            'css/display/main.css',
+            'css/display/header.css',
             'css/datatables/demo_table.css',
             'css/datatables/demo_page.css',
             'css/datatables/demo_table_jui.css',
