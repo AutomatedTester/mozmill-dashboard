@@ -12,7 +12,7 @@ Installation
 * Put some data in elastic search. For now, cd into elasticsearch/grandreset/ and run ./reset
 * Install mysql-server
  * Create a database called "dashboard" using "CREATE DATABASE dashboard;"
-* git clone --recursive git://github.com/highriseo/Mozmill-Dashboard-4.0.git
+* `git clone --recursive git://github.com/highriseo/Mozmill-Dashboard-4.0.git`
 * configure settings_local.py to include db configurations
 * pip install -r requirements/compiled.txt
 * Run `./manage.py syncdb --noinput`
