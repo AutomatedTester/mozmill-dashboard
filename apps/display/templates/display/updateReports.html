@@ -40,7 +40,6 @@
   <thead>
   <tr>
     <th class='header'>Date</th>
-    <th class='header'>Version</th>
     <th class='header'>Pre Version</th>
     <th class='header'>Post Version</th>
     <th class='header'>Build</th>
@@ -56,7 +55,6 @@
 {% for report in reports %}
   <tr>
     <td><a href ="/report/{{report.id}}">{{report.date}}</a></td>
-    <td>{{report.version}}</td>
     <td>{{report.preVersion}}</td>
     <td>{{report.postVersion}}</td>
     <td>{{report.build}}</td>

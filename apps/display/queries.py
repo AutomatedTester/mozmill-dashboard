@@ -87,9 +87,9 @@ class reports:
             }
             try:
                 result['preVersion']=hit['updates'][0]['build_pre']['version']
-                result['postVersion']=hit['updates'][0]['build_pre']['version']
+                result['postVersion']=hit['updates'][0]['build_post']['version']
             except (IndexError, KeyError):
-                result['preVersion']='NA'
+                result['preVersion']=result['version']
                 result['postVersion']='NA'
 
 
