@@ -7,8 +7,8 @@ from django.conf import settings
 
 def format_date(date):
     return "%s-%s-%s"%(date.year,date.month,date.day)
-
-class reports:
+    
+class ES_wrapper:
     query = {
         "size":50,
         "query": {
@@ -30,7 +30,7 @@ class reports:
     filters=[]
     from_date="2011-01-16"
     to_date="2011-01-19"
-
+    
     def __init__(self):
         today = datetime.date.today()
         delta = datetime.timedelta(days=-3)
@@ -38,7 +38,7 @@ class reports:
 
         self.to_date = format_date(today)
         self.from_date = format_date(three_ago)
-
+    
     def update_query(self):
         if len(self.filters)==0:
             self.query['query']={'match_all':{}}
@@ -47,24 +47,79 @@ class reports:
 
         self.query['filter']['range']['time_upload']['from']=self.from_date
         self.query['filter']['range']['time_upload']['to']=self.to_date
-
-                
-###Filter Manuplation
+        
+    ###Filter Manuplation
     def add_filter_term(self, requirement):
         self.filters.append({"text":requirement})
 
     def clear_filters(self):
         self.filters = []
+        
+    def __grabber__(self, query, _id=False):
+        h=Http()
+        server=settings.ELASTICSEARCH
+        if _id:
+            server+=_id
+        else:
+            server+='_search'
+            
+        print query
+        
+        resp, content = h.request(server, "GET", json.dumps(query))
+        if resp['status']=='200':
+            return json.loads(content)
+            #return facets
+        else:#TODO: Should maybe throw a real exeption on this guy
+            raise Exception("Elasticsearch hates you (and your children)")
+    
+            return {'response':resp['status']}        
+        
+class Facets(ES_wrapper):
+    query = {
+        "size":50,
+        "query": {
+            "bool":{
+                "must" : [
+                ]
+            }
+        },
+        "filter": {
+            "range":{
+                "time_upload":{
+                    "from":"2011-01-16",
+                    "to":"2011-01-19"
+                } 
+            }
+        }
+    }
+    
+    def __init__(self):
+        ES_wrapper.__init__(self)
+        self.query['facets']={
+            "tags" : { 
+                "terms" : {
+                    "field" : "failed_function"
+                }
+            }
+        }
+        
+    def set_field(self,field):
+        self.query['facets']['tags']['terms']['field']=field
+        
+    def execute(self):
+        self.update_query()
+        del self.query['filter']
+        return self.__grabber__(self.query)
 
-
-###OUT PUT
+class reports(ES_wrapper):
+    ###OUT PUT
     def dump(self):
         self.update_query()
         return json.dumps(self.query)
  
     def execute(self):
         self.update_query()
-        return grabber(self.query)
+        return self.__grabber__(self.query)
 
     def return_reports(self):
         hits = self.execute()['hits']['hits']
@@ -97,7 +152,7 @@ class reports:
 
         return results
            
-
+'''
 def grab_operating_systems(query):
     content = grabber(query)
     result=[]
@@ -111,34 +166,5 @@ def grab_facet_response(query):
     for term in content['facets']['tag']['terms']:
         result.append({'name':term['term'],'failures':term['count']})
     return result 
+'''     
 
-def parse(query, formatter):
-    #This is dead code
-    raise Exception("parse in queries.py is being used and owen thought it was dead")
-    '''
-    h=Http()
-    resp, content = h.request('http://10.250.7.224:9200/filter1/doc/_search', "GET", json.dumps(query))
-    if resp['status']=='200':
-        content = json.loads(content)
-        facets = formatter(content['facets'])
-        return facets
-    else:
-        return {'response':resp['status']}
-    '''
-        
-def grabber(query, _id=False):
-    h=Http()
-
-    server=settings.ELASTICSEARCH
-    if _id:
-        server+=_id
-    else:
-        server+='_search'
-    resp, content = h.request(server, "GET", json.dumps(query))
-    if resp['status']=='200':
-        return json.loads(content)
-        #return facets
-    else:#TODO: Should maybe throw a real exeption on this guy
-        raise Exception("Elasticsearch hates you (and your children)")
-
-        return {'response':resp['status']}

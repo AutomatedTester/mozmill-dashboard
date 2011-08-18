@@ -54,7 +54,7 @@ def reporter(request,report_type='all'):
     elif report_type == 'functional':
         return jingo.render(request, 'display/reports.html', data)
     elif report_type == 'endurance':
-        return HttpResponse("GAH NO ENDURACE")
+        return jingo.render(request, 'display/reports.html', data)
     elif report_type == 'update':
         return update(request,data)
 
