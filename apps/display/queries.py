@@ -41,9 +41,8 @@ class ES_wrapper:
             server+=_id
         else:
             server+='_search'
-            
-        print query
         
+        print json.dumps(query)
         resp, content = h.request(server, "GET", json.dumps(query))
         if resp['status']=='200':
             return json.loads(content)
@@ -60,11 +59,6 @@ class ES_wrapper:
     def clear_filters(self):
         self.filters = []
         
-    def set_from_date(self,from_date):
-        self.from_date=from_date
-        
-    def set_to_date(self,to_date):
-        self.to_date=to_date
         
        
         
@@ -137,8 +131,8 @@ class reports(ES_wrapper):
         else:
             self.query['query']={'bool':{'must':self.filters}}
 
-        self.query['filter']['range']['time_upload']['from']=self.from_date
-        self.query['filter']['range']['time_upload']['to']=self.to_date
+        self.query['filter']['range']['time_upload']['from']=str(self.from_date)
+        self.query['filter']['range']['time_upload']['to']=str(self.to_date)
 
     def return_reports(self):
         hits = self.__execute__()['hits']['hits']
@@ -146,6 +140,7 @@ class reports(ES_wrapper):
 
         for hit in hits:
             hit = hit['_source']
+            print "foo"
             result={
                 'date':hit['time_upload'],
                 'version':hit['application_version'],
@@ -169,6 +164,7 @@ class reports(ES_wrapper):
 
             results.append(result)
 
+        print results
         return results
         
         

@@ -4,7 +4,7 @@ from copy import deepcopy
 from django import http
 from django.http import HttpResponse, HttpResponseForbidden
 
-from display.queries import reports, Facets #, grab_facet_response, grab_operating_systems, grabber 
+from display.queries import reports, Facets, format_date #, grab_facet_response, grab_operating_systems, grabber 
 from display.utils import filter_request
 
 ##This is a function to deal with adding filters to elastic search in a less general way but without code duplication in the view code
@@ -29,7 +29,7 @@ def reporter(request,test_type='all',top_fail_view=False):
         es_object=reports()
     
     es_object.clear_filters()
- 
+    
     if test_type=='functional':
         es_object.add_filter_term({"report_type": "firefox-functional"})
     elif test_type=='endurance':
@@ -50,9 +50,11 @@ def reporter(request,test_type='all',top_fail_view=False):
     else:
         es_object.from_date=request.GET['from_date']
         es_object.to_date=request.GET['to_date']
-        
-    data['from_date']=es_object.from_date,
-    data['to_date']=es_object.to_date,
+
+    data['from_date']=es_object.from_date
+    data['to_date']=es_object.to_date
+    
+    print data['from_date']
 
 
     if top_fail_view:
@@ -60,22 +62,26 @@ def reporter(request,test_type='all',top_fail_view=False):
     else:
         return render_reports_view(request,es_object,data)
         
-def render_reports_view(reqest,es_object,data):
-    data['reports']=es_object.return_reports(),
+def render_reports_view(request,es_object,data):
+    data['reports']=es_object.return_reports()
+    test_type=data['report_type']
+
 
     if test_type == 'all':
-        return jingo.render(request, 'display/reports.html', data)
+        return jingo.render(request, 'display/reports/reports.html', data)
     elif test_type == 'functional':
-        return jingo.render(request, 'display/reports.html', data)
+        return jingo.render(request, 'display/reports/reports.html', data)
     elif test_type == 'endurance':
-        return jingo.render(request, 'display/reports.html', data)
+        return jingo.render(request, 'display/reports/updateReports.html', data)
     elif report_type == 'update':
         return update(request,data)
 
 
 
 def render_top_fail(request,es_object, data):
-    return HttpResponse("Top Fail!")
+    data['topfails']=es_object.return_facets()
+    print data['topfails']
+    return jingo.render(request, 'display/facets/all.html', data)
     
     
 
