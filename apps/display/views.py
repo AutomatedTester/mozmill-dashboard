@@ -4,29 +4,42 @@ from copy import deepcopy
 from django import http
 from django.http import HttpResponse, HttpResponseForbidden
 
-from display.queries import reports #, grab_facet_response, grab_operating_systems, grabber 
+from display.queries import reports, Facets #, grab_facet_response, grab_operating_systems, grabber 
 from display.utils import filter_request
 
 ##This is a function to deal with adding filters to elastic search in a less general way but without code duplication in the view code
 #The name parameter is whatever mozmill decides to call it. the Key is what it is in the request object
 
 
-def reporter(request,report_type='all'):
+def reporter(request,test_type='all',top_fail_view=False):
     oses=['all',"windows nt","mac", "linux"]
     locales = ['all','en-US', 'es-ES', 'fr', 'ja-JP-mac', 'zh-TW', 'de', 'ko', 'pl', 'da', 'it']
-    foo=reports()
-    foo.clear_filters()
+    data = {
+        'current_os':request.GET.get('os','all'),
+        'current_locale':request.GET.get('locale','all'),
+        'report_type': test_type,
+        'operating_systems':oses, 
+        'locales':locales,
+    }
+     
+    #queries.Facets and queries.reports have been designed to be polymorphic   
+    if top_fail_view:
+        es_object=Facets()
+    else:
+        es_object=reports()
+    
+    es_object.clear_filters()
  
-    if report_type=='functional':
-        foo.add_filter_term({"report_type": "firefox-functional"})
-    elif report_type=='endurance':
-        foo.add_filter_term({"report_type": "firefox-endurance"})
-    elif report_type=='update':
-        foo.add_filter_term({"report_type": "firefox-update"})
+    if test_type=='functional':
+        es_object.add_filter_term({"report_type": "firefox-functional"})
+    elif test_type=='endurance':
+        es_object.add_filter_term({"report_type": "firefox-endurance"})
+    elif test_type=='update':
+        es_object.add_filter_term({"report_type": "firefox-update"})
 
     #Adds filters based on get paramaters for elastic search
-    filter_request(request,foo,'os','system',oses)
-    filter_request(request,foo,'locale','application_locale',locales)
+    filter_request(request,es_object,'os','system',oses)
+    filter_request(request,es_object,'locale','application_locale',locales)
 
     ##If the dates have been set by the request use them, otherwise use the default
     try:
@@ -35,31 +48,36 @@ def reporter(request,report_type='all'):
     except KeyError:
         pass
     else:
-        foo.from_date=request.GET['from_date']
-        foo.to_date=request.GET['to_date']
+        es_object.from_date=request.GET['from_date']
+        es_object.to_date=request.GET['to_date']
+        
+    data['from_date']=es_object.from_date,
+    data['to_date']=es_object.to_date,
 
-    data = {
-        'reports':foo.return_reports(),
-        'operating_systems':oses, 
-        'locales':locales,
-        'from_date':foo.from_date,
-        'to_date':foo.to_date,
-        'current_os':request.GET.get('os','all'),
-        'current_locale':request.GET.get('locale','all'),
-        'report_type': report_type
-    }
 
-    if report_type == 'all':
+    if top_fail_view:
+        return render_top_fail(request,es_object,data)
+    else:
+        return render_reports_view(request,es_object,data)
+        
+def render_reports_view(reqest,es_object,data):
+    data['reports']=es_object.return_reports(),
+
+    if test_type == 'all':
         return jingo.render(request, 'display/reports.html', data)
-    elif report_type == 'functional':
+    elif test_type == 'functional':
         return jingo.render(request, 'display/reports.html', data)
-    elif report_type == 'endurance':
+    elif test_type == 'endurance':
         return jingo.render(request, 'display/reports.html', data)
     elif report_type == 'update':
         return update(request,data)
 
-def update(request,data):
-        return jingo.render(request, 'display/updateReports.html',data)
+
+
+def render_top_fail(request,es_object, data):
+    return HttpResponse("Top Fail!")
+    
+    
 
 
 

@@ -29,15 +29,7 @@ class ES_wrapper:
 
         self.to_date = format_date(today)
         self.from_date = format_date(three_ago)
-    
-        
-    ###Filter Manuplation
-    def add_filter_term(self, requirement):
-        self.filters.append({"text":requirement})
 
-    def clear_filters(self):
-        self.filters = []
-        
     def __execute__(self):
         self.update_query()
         return self.__grabber__(self.query)
@@ -59,7 +51,22 @@ class ES_wrapper:
         else:#TODO: Should maybe throw a real exeption on this guy
             raise Exception("Elasticsearch hates you (and your children)")
     
-            return {'response':resp['status']}        
+            return {'response':resp['status']}     
+        
+    ###Filter Manuplation
+    def add_filter_term(self, requirement):
+        self.filters.append({"text":requirement})
+
+    def clear_filters(self):
+        self.filters = []
+        
+    def set_from_date(self,from_date):
+        self.from_date=from_date
+        
+    def set_to_date(self,to_date):
+        self.to_date=to_date
+        
+       
         
 #You want to use these docs to figure out whats going on
 #http://www.elasticsearch.org/guide/reference/api/search/facets/
