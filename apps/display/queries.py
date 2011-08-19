@@ -10,21 +10,12 @@ def format_date(date):
     
 class ES_wrapper:
     query = {
-        "size":50,
         "query": {
             "bool":{
                 "must" : [
                 ]
             }
         },
-        "filter": {
-            "range":{
-                "time_upload":{
-                    "from":"2011-01-16",
-                    "to":"2011-01-19"
-                } 
-            }
-        }
     }
 
     filters=[]
@@ -39,14 +30,6 @@ class ES_wrapper:
         self.to_date = format_date(today)
         self.from_date = format_date(three_ago)
     
-    def update_query(self):
-        if len(self.filters)==0:
-            self.query['query']={'match_all':{}}
-        else:
-            self.query['query']={'bool':{'must':self.filters}}
-
-        self.query['filter']['range']['time_upload']['from']=self.from_date
-        self.query['filter']['range']['time_upload']['to']=self.to_date
         
     ###Filter Manuplation
     def add_filter_term(self, requirement):
@@ -54,6 +37,10 @@ class ES_wrapper:
 
     def clear_filters(self):
         self.filters = []
+        
+    def __execute__(self):
+        self.update_query()
+        return self.__grabber__(self.query)
         
     def __grabber__(self, query, _id=False):
         h=Http()
@@ -74,16 +61,56 @@ class ES_wrapper:
     
             return {'response':resp['status']}        
         
-class Facets(ES_wrapper):
-    query = {
-        "size":50,
-        "query": {
-            "bool":{
-                "must" : [
-                ]
+#You want to use these docs to figure out whats going on
+#http://www.elasticsearch.org/guide/reference/api/search/facets/
+#This is a subclassing specifically for Facets (like the top failure view)
+class Facets(ES_wrapper):    
+    def __init__(self):
+        ES_wrapper.__init__(self)
+        size = 50
+        self.query['facets']={
+            "topfail" : { 
+                "terms" : {
+                    "field" : "failed_function",
+                    "size" : size,
+                },
+                "facet_filter" : {
+                    "range": {
+                        "time_upload":{
+                            "from":"2011-01-16",
+                            "to":"2011-01-19",
+                        }
+                    } 
+                }  
             }
-        },
-        "filter": {
+        }
+        
+    def update_query(self):
+        if len(self.filters)==0:
+            self.query['query']={'match_all':{}}
+        else:
+            self.query['query']={'bool':{'must':self.filters}}
+
+        self.query['facets']['topfail']['facet_filter']['range']['time_upload']['from']=self.from_date
+        self.query['facets']['topfail']['facet_filter']['range']['time_upload']['to']=self.to_date
+
+    #Sets the field that is being counted. It is probably going to be "failed_function" or "passed_function"
+    def set_field(self,field):
+        self.query['facets']['topfail']['terms']['field']=field
+        
+    #go and get the reports
+    def __execute__(self):
+        self.update_query()
+        return self.__grabber__(self.query)
+        
+    def return_facets(self):
+        return self.__execute__()['facets']['topfail']['terms']
+
+class reports(ES_wrapper):
+    def __init__(self):
+        ES_wrapper.__init__(self)
+        self.query['size']=50
+        self.query['filter']={
             "range":{
                 "time_upload":{
                     "from":"2011-01-16",
@@ -91,38 +118,23 @@ class Facets(ES_wrapper):
                 } 
             }
         }
-    }
-    
-    def __init__(self):
-        ES_wrapper.__init__(self)
-        self.query['facets']={
-            "tags" : { 
-                "terms" : {
-                    "field" : "failed_function"
-                }
-            }
-        }
         
-    def set_field(self,field):
-        self.query['facets']['tags']['terms']['field']=field
-        
-    def execute(self):
-        self.update_query()
-        del self.query['filter']
-        return self.__grabber__(self.query)
-
-class reports(ES_wrapper):
     ###OUT PUT
     def dump(self):
         self.update_query()
         return json.dumps(self.query)
- 
-    def execute(self):
-        self.update_query()
-        return self.__grabber__(self.query)
+        
+    def update_query(self):
+        if len(self.filters)==0:
+            self.query['query']={'match_all':{}}
+        else:
+            self.query['query']={'bool':{'must':self.filters}}
+
+        self.query['filter']['range']['time_upload']['from']=self.from_date
+        self.query['filter']['range']['time_upload']['to']=self.to_date
 
     def return_reports(self):
-        hits = self.execute()['hits']['hits']
+        hits = self.__execute__()['hits']['hits']
         results=[]
 
         for hit in hits:
@@ -151,6 +163,14 @@ class reports(ES_wrapper):
             results.append(result)
 
         return results
+        
+        
+class Report(ES_wrapper):
+    def __init__(self):
+        pass
+        
+    def grab(self,id):
+        return self.__grabber__('',id)
            
 '''
 def grab_operating_systems(query):

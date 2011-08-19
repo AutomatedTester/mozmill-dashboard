@@ -4,7 +4,7 @@ from copy import deepcopy
 from django import http
 from django.http import HttpResponse, HttpResponseForbidden
 
-from display.queries import reports, grab_facet_response, grab_operating_systems, grabber 
+from display.queries import reports, Report #, grab_facet_response, grab_operating_systems, grabber 
 from display.report.utils import parse_results
 
 BYTE_IN_MB=1048576.0
@@ -15,7 +15,7 @@ def mb_convert(byte):
 
 
 def report(request,_id):
-    report=grabber('',_id)
+    report=Report().grab(_id)
     report = report['_source']
     results = []
     data = {

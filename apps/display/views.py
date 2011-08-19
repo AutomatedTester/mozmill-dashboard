@@ -4,7 +4,7 @@ from copy import deepcopy
 from django import http
 from django.http import HttpResponse, HttpResponseForbidden
 
-from display.queries import reports, grab_facet_response, grab_operating_systems, grabber 
+from display.queries import reports #, grab_facet_response, grab_operating_systems, grabber 
 from display.utils import filter_request
 
 ##This is a function to deal with adding filters to elastic search in a less general way but without code duplication in the view code
