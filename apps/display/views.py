@@ -12,6 +12,9 @@ from display.utils import filter_request
 
 
 def reporter(request,test_type='all',top_fail_view=False):
+    #This needs to be dynamic. Unfortunately, performance is aweful if it is queried directly 
+    #from elastic search. A cron job to get the result and cache it in the database is probably 
+    #the right way to go.
     oses=['all',"windows nt","mac", "linux"]
     locales = ['all','en-US', 'es-ES', 'fr', 'ja-JP-mac', 'zh-TW', 'de', 'ko', 'pl', 'da', 'it']
     data = {
