@@ -23,7 +23,7 @@ def turnaround(serial_number):
             resp = h.request('http://localhost:9200/filter1/doc/%s'%(serial_number), "POST", post)
             print serial_number
     except:
-        print "exception"
+        print "exception: %s"%(serial_number)
         pass 
 
 
@@ -37,6 +37,5 @@ def parse():
 
 
 if __name__=="__main__":
-    #turnaround("0017c80a72fdd58c8bb2cbfee319f0d9")
     parse()
 
