@@ -33,12 +33,9 @@ def reporter(request,test_type='all',top_fail_view=False):
     
     es_object.clear_filters()
     
-    if test_type=='functional':
-        es_object.add_filter_term({"report_type": "firefox-functional"})
-    elif test_type=='endurance':
-        es_object.add_filter_term({"report_type": "firefox-endurance"})
-    elif test_type=='update':
-        es_object.add_filter_term({"report_type": "firefox-update"})
+
+    es_object.add_filter_term({"report_type": "firefox-%s"%test_type})
+
 
     #Adds filters based on get paramaters for elastic search
     filter_request(request,es_object,'os','system',oses)

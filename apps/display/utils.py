@@ -1,4 +1,3 @@
-
 def filter_request(request,foo,key,name,options):
     #foo
     try:
