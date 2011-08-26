@@ -63,7 +63,6 @@ def render_reports_view(request,es_object,data):
     data['reports']=es_object.return_reports()
     test_type=data['report_type']
 
-
     if test_type == 'all':
         return jingo.render(request, 'display/reports/reports.html', data)
     elif test_type == 'functional':
@@ -71,9 +70,7 @@ def render_reports_view(request,es_object,data):
     elif test_type == 'endurance':
         return jingo.render(request, 'display/reports/updateReports.html', data)
     elif report_type == 'update':
-        return update(request,data)
-
-
+        return jingo.render(request, 'display/reports/updateReports.html', data)
 
 def render_top_fail(request,es_object, data):
     data['topfails']=es_object.return_facets()
