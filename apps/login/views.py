@@ -40,7 +40,6 @@ def verify_login(request):
                         host=request.META['SERVER_NAME'],
                         port=request.META['SERVER_PORT'])
 
-    print request.POST['assertion']
     print 5*'\n'
     if user is not None:
         if user.is_active:

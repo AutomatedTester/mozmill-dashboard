@@ -10,7 +10,6 @@ def turnaround(serial_number):
     report_to_es(content)
 
 def report_to_es(content):
-    print 'called'
     h=Http()
     doc = json.loads(content)
     try:    #Let elastic search create its own IDs, get rid of them if couchdb made it
