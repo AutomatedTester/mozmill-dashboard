@@ -1,4 +1,4 @@
-def filter_request(request,foo,key,name,options):
+def filter_request(request,es_object,key,name,options):
     #foo
     try:
         request.GET[key]
@@ -9,8 +9,8 @@ def filter_request(request,foo,key,name,options):
 		return
 
     if request.GET[key] in options:
-        foo.add_filter_term({name:request.GET[key]})
+        es_object.add_filter_term({name:request.GET[key]})
     else:
-		raise
+	raise
 
 
