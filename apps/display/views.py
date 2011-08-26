@@ -54,9 +54,6 @@ def reporter(request,test_type='all',top_fail_view=False):
     data['from_date']=es_object.from_date
     data['to_date']=es_object.to_date
     
-    print data['from_date']
-
-
     if top_fail_view:
         return render_top_fail(request,es_object,data)
     else:
@@ -80,6 +77,5 @@ def render_reports_view(request,es_object,data):
 
 def render_top_fail(request,es_object, data):
     data['topfails']=es_object.return_facets()
-    print data['topfails']
     return jingo.render(request, 'display/facets/all.html', data)
 

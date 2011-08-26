@@ -42,7 +42,6 @@ class ES_wrapper:
         else:
             server+='_search'
         
-        print json.dumps(query)
         resp, content = h.request(server, "GET", json.dumps(query))
         if resp['status']=='200':
             return json.loads(content)
@@ -140,7 +139,6 @@ class reports(ES_wrapper):
 
         for hit in hits:
             hit = hit['_source']
-            print "foo"
             result={
                 'date':hit['time_upload'],
                 'version':hit['application_version'],
@@ -164,7 +162,6 @@ class reports(ES_wrapper):
 
             results.append(result)
 
-        print results
         return results
         
         
