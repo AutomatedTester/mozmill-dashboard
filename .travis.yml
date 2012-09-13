@@ -7,7 +7,7 @@ python:
 install:
   - "pip install -r requirements/compiled.txt --use-mirrors"
 
-after_install:
+before_script:
   - "git submodule update --init --recursive"
 
 script: "./manage.py test"
