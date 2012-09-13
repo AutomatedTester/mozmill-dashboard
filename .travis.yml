@@ -5,6 +5,9 @@ python:
   - "2.7"
 # command to install dependencies
 install:
-  - "pip install -r requirements.txt --use-mirrors"
+  - "pip install -r requirements/compiled.txt --use-mirrors"
+
+after_install:
+  - git submodule update --init --recursive
 
 script: ./manage.py test
