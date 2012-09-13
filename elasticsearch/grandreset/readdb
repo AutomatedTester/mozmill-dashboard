@@ -8,7 +8,8 @@ from multiprocessing import Pool
 def turnaround(serial_number):
     h = Http()
     try:
-        resp, content = h.request("http://mozmill-release.brasstacks.mozilla.com/db/%s"%(serial_number), "GET")
+        resp, content = h.request("http://mozmill-ci.blargon7.com/db/%s"%(serial_number), "GET")
+        print content
         doc = json.loads(content)
 
         for (counter,function) in enumerate(doc['results']):
@@ -20,17 +21,17 @@ def turnaround(serial_number):
         post = json.dumps(doc)
 
         if resp['status']=='200':
-            resp = h.request('http://localhost:9200/filter1/doc/%s'%(serial_number), "POST", post)
+            resp = h.request('http://localhost:8000/en-US/report/', "POST", post)
             print serial_number
-    except:
-        print "exception: %s"%(serial_number)
-        pass 
+    except Exception as e:
+        print "exception: %s" % (serial_number)
+        print e
 
 
 def parse():
     f = open('_all_docs', 'r')
     doc_list = json.loads(f.read())
-    pool = Pool(processes=20)
+    #pool = Pool(processes=20)
 
     for row in doc_list['rows']:
         turnaround(row['id'])
