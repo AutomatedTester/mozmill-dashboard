@@ -7,7 +7,6 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
     # Example:
-    (r'^grow/', include('grow.urls')),
     (r'^accounts/', include('login.urls')),
     (r'', include('display.urls')),
 

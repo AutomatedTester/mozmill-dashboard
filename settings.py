@@ -221,7 +221,6 @@ INSTALLED_APPS = (
     'login',
     'examples',  # Example code. Can (and should) be removed for actual projects.
     'display',
-    'grow',
     #'browserid_auth',
 
     # We need this so the jsi18n view will pick up our locale directory.

@@ -19,3 +19,9 @@ class OS(models.Model):
     
     def __unicode__(self):
         return self.OS
+        
+class Results(models.Model):
+
+    id = models.AutoField(primary_key=True)
+    results = models.TextField()
+

@@ -1,17 +1,18 @@
 import jingo
 import simplejson as json
-from copy import deepcopy
-from django import http
-from django.http import HttpResponse, HttpResponseForbidden
 
-from display.queries import reports, Facets, format_date #, grab_facet_response, grab_operating_systems, grabber 
+from django.http import HttpResponse
+
 from display.utils import filter_request
+from django.views.decorators.csrf import csrf_exempt
+
+from models import Results
 
 ##This is a function to deal with adding filters to elastic search in a less general way but without code duplication in the view code
 #The name parameter is whatever mozmill decides to call it. the Key is what it is in the request object
 
 
-def reporter(request,test_type='all',top_fail_view=False):
+def reporter(request, test_type='all', top_fail_view=False):
     #This needs to be dynamic. Unfortunately, performance is aweful if it is queried directly 
     #from elastic search. A cron job to get the result and cache it in the database is probably 
     #the right way to go.
@@ -24,22 +25,18 @@ def reporter(request,test_type='all',top_fail_view=False):
         'operating_systems':oses, 
         'locales':locales,
     }
+
+    results = Results
      
     #queries.Facets and queries.reports have been designed to be polymorphic   
-    if top_fail_view:
-        es_object=Facets()
-    else:
-        es_object=reports()
-    
-    es_object.clear_filters()
     
 
-    es_object.add_filter_term({"report_type": "firefox-%s"%test_type})
+    # es_object.add_filter_term({"report_type": "firefox-%s"%test_type})
 
 
     #Adds filters based on get paramaters for elastic search
-    filter_request(request,es_object,'os','system',oses)
-    filter_request(request,es_object,'locale','application_locale',locales)
+    filter_request(request, results,'os','system',oses)
+    filter_request(request, results,'locale','application_locale',locales)
 
     ##If the dates have been set by the request use them, otherwise use the default
     try:
@@ -48,19 +45,20 @@ def reporter(request,test_type='all',top_fail_view=False):
     except KeyError:
         pass
     else:
-        es_object.from_date=request.GET['from_date']
-        es_object.to_date=request.GET['to_date']
+        #es_object.from_date=request.GET['from_date']
+        #es_object.to_date=request.GET['to_date']
+        pass
 
-    data['from_date']=es_object.from_date
-    data['to_date']=es_object.to_date
+    #data['from_date']=es_object.from_date
+    #data['to_date']=es_object.to_date
     
     if top_fail_view:
-        return render_top_fail(request,es_object,data)
+        return render_top_fail(request, results,data)
     else:
-        return render_reports_view(request,es_object,data)
+        return render_reports_view(request, results, data)
         
-def render_reports_view(request,es_object,data):
-    data['reports']=es_object.return_reports()
+def render_reports_view(request, results, data):
+    data['reports']= results.objects.all() #es_object.return_reports()
     test_type=data['report_type']
 
     if test_type == 'all':
@@ -69,10 +67,36 @@ def render_reports_view(request,es_object,data):
         return jingo.render(request, 'display/reports/reports.html', data)
     elif test_type == 'endurance':
         return jingo.render(request, 'display/reports/updateReports.html', data)
-    elif report_type == 'update':
+    elif test_type == 'update':
         return jingo.render(request, 'display/reports/updateReports.html', data)
 
-def render_top_fail(request,es_object, data):
-    data['topfails']=es_object.return_facets()
+def render_top_fail(request, results, data):
+    data['topfails']=results.objects.all()
     return jingo.render(request, 'display/facets/all.html', data)
 
+
+@csrf_exempt
+def report(request):
+    import pdb
+    pdb.set_trace()
+    if request.method=="POST":
+        print request.raw_post_data
+        doc = json.loads(request.raw_post_data)
+        try:
+            del doc['_id']
+            del doc['_rev']
+        except:
+            # we are only clearing so rough data so ok to ignore the exception
+            pass
+
+        for (counter, function) in enumerate(doc['results']):
+            if function['failed'] == 0:
+                doc['results'][counter]['passed_function'] = function['name']
+            else:
+                doc['results'][counter]['failed_function'] = function['name']
+
+        results = Results(results=doc)
+        results.save()
+
+
+    return HttpResponse('Hello World')

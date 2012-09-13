@@ -1,7 +1,11 @@
 from django.conf.urls.defaults import *
 
-#URL patterns for the reports views
 urlpatterns = patterns('display.views',
+    url(r'^report/$', 'report', name='display.report'),
+)
+
+#URL patterns for the reports views
+urlpatterns += patterns('display.views',
     url(r'^$', 'reporter', {'test_type':'all'}, name='display.all_reports'),
     url(r'^functional/$', 'reporter', {'test_type':'functional'}, name='display.functional'),
     url(r'^endurance/$', 'reporter', {'test_type':'endurance'}, name='display.endurance'),
