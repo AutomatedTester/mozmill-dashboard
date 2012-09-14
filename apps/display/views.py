@@ -1,5 +1,5 @@
 import jingo
-import simplejson as json
+import json
 
 from django.http import HttpResponse
 
@@ -58,7 +58,7 @@ def reporter(request, test_type='all', top_fail_view=False):
         return render_reports_view(request, results, data)
         
 def render_reports_view(request, results, data):
-    data['reports']= results.objects.all() #es_object.return_reports()
+    data['reports']= results.objects.values() 
     test_type=data['report_type']
 
     if test_type == 'all':
@@ -71,17 +71,17 @@ def render_reports_view(request, results, data):
         return jingo.render(request, 'display/reports/updateReports.html', data)
 
 def render_top_fail(request, results, data):
-    data['topfails']=results.objects.all()
+    print results.objects.values()[:10]
+    data['topfails']=results.objects.values()[:10]
     return jingo.render(request, 'display/facets/all.html', data)
 
 
 @csrf_exempt
 def report(request):
-    import pdb
-    pdb.set_trace()
     if request.method=="POST":
-        print request.raw_post_data
-        doc = json.loads(request.raw_post_data)
+        
+        doc = json.loads(request.body)
+        
         try:
             del doc['_id']
             del doc['_rev']
@@ -89,7 +89,7 @@ def report(request):
             # we are only clearing so rough data so ok to ignore the exception
             pass
 
-        for (counter, function) in enumerate(doc['results']):
+        for counter, function in enumerate(doc['results']):
             if function['failed'] == 0:
                 doc['results'][counter]['passed_function'] = function['name']
             else:
