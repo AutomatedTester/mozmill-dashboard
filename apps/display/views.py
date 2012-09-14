@@ -1,5 +1,6 @@
 import jingo
 import json
+import datetime
 
 from django.http import HttpResponse
 
@@ -95,7 +96,9 @@ def report(request):
             else:
                 doc['results'][counter]['failed_function'] = function['name']
 
-        results = Results(results=doc)
+        results = Results(results=doc, 
+                          report_type=doc['report_type'], 
+                          time_upload=datetime.datetime.strptime(doc['time_upload'], '%Y-%m-%dT%H:%M:%SZ'))
         results.save()
 
 

@@ -23,5 +23,7 @@ class OS(models.Model):
 class Results(models.Model):
 
     id = models.AutoField(primary_key=True)
+    report_type = models.CharField(max_length=40)
+    time_upload = models.DateTimeField()
     results = models.TextField()
 
