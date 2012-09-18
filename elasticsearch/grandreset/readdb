@@ -23,6 +23,8 @@ def turnaround(serial_number):
         if resp['status']=='200':
             resp = h.request('http://localhost:8000/en-US/report/', "POST", post)
             print serial_number
+        else:
+            print content
     except Exception as e:
         print "exception: %s" % (serial_number)
         print e
