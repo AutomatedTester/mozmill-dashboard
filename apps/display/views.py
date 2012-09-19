@@ -27,17 +27,13 @@ def reporter(request, test_type='all', top_fail_view=False):
         'locales':locales,
     }
 
-    results = Results
+    results = Results.objects.filter(report_type = 'firefox-%' % test_type)
      
-    #queries.Facets and queries.reports have been designed to be polymorphic   
-    
-
-    # es_object.add_filter_term({"report_type": "firefox-%s"%test_type})
-
 
     #Adds filters based on get paramaters for elastic search
-    filter_request(request, results,'os','system',oses)
-    filter_request(request, results,'locale','application_locale',locales)
+    filter_request(request, results, 'os', 'system', oses)
+    filter_request(request, results, 'locale', 
+                   'application_locale', locales)
 
     ##If the dates have been set by the request use them, otherwise use the default
     try:
@@ -46,8 +42,6 @@ def reporter(request, test_type='all', top_fail_view=False):
     except KeyError:
         pass
     else:
-        #es_object.from_date=request.GET['from_date']
-        #es_object.to_date=request.GET['to_date']
         pass
 
     #data['from_date']=es_object.from_date
@@ -59,7 +53,7 @@ def reporter(request, test_type='all', top_fail_view=False):
         return render_reports_view(request, results, data)
         
 def render_reports_view(request, results, data):
-    data['reports']= results.objects.values() 
+    data['reports'] = results.objects.values() 
     test_type=data['report_type']
 
     if test_type == 'all':
@@ -90,7 +84,11 @@ def report(request):
             # we are only clearing so rough data so ok to ignore the exception
             pass
         
-
+        def _real_or_none(field):
+            if doc.has_key(field):
+                return doc[field]
+            else:
+                return None
         # Save the system info
         system_info = SystemInfo(hostname = doc['system_info']['hostname'],
                                  service_pack = doc['system_info']['service_pack'],
@@ -102,27 +100,27 @@ def report(request):
 
         # Save the results
         results = Results(results=doc, 
-                          report_type=doc['report_type'], 
-                          tests_repository = doc['tests_repository'],
-                          tests_changeset = doc['tests_changeset'],
+                          report_type=_real_or_none('report_type'), 
+                          tests_repository = _real_or_none('tests_repository'),
+                          tests_changeset = _real_or_none('tests_changeset'),
                           time_start = datetime.datetime.strptime(doc['time_start'], date_format),
-                          application_changeset = doc['application_changeset'],
+                          application_changeset = _real_or_none('application_changeset'),
                           system_info=system_info,
-                          platform_version = doc['platform_version'],
+                          platform_version = _real_or_none('platform_version'),
                           tests_passed = doc['tests_passed'],
-                          application_repository = doc['application_repository'],
-                          platform_changeset = doc['platform_changeset'],
-                          platform_repository = doc['platform_repository'],
+                          application_repository = _real_or_none('application_repository'),
+                          platform_changeset = _real_or_none('platform_changeset'),
+                          platform_repository = _real_or_none('platform_repository'),
                           tests_failed = doc['tests_failed'],
                           time_end= datetime.datetime.strptime(doc['time_end'], date_format),
-                          application_locale = doc['application_locale'],
-                          platform_buildid = doc['platform_buildid'],
-                          application_version = doc['application_version'],
+                          application_locale = _real_or_none('application_locale'),
+                          platform_buildid = _real_or_none('platform_buildid'),
+                          application_version = _real_or_none('application_version'),
                           tests_skipped = doc['tests_skipped'],
                           time_upload=datetime.datetime.strptime(doc['time_upload'], date_format),
-                          application_name = doc['application_name'],
-                          mozmill_version = doc['mozmill_version'],
-                          report_version = doc['report_version'])
+                          application_name = _real_or_none('application_name'),
+                          mozmill_version = _real_or_none('mozmill_version'),
+                          report_version = _real_or_none('report_version'))
         results.save()
         
         for adds in doc['addons']:

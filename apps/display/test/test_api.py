@@ -68,6 +68,7 @@ class PostResults(test_utils.TestCase):
     'https://aus3.mozilla.org/update/3/Firefox/13.0a1/20120203031138/Darwin_x86_64-gcc3-u-i386-x86_64/en-US/nightly/Darwin%2011.2.0/default/default/update.xml?force=1'}}],
     'report_version': '1.0'}
     
+
     def test_we_can_post_results_to_a_database(self):
         
         response = self.client.post("/en-US/report/", json.dumps(self.data),content_type="application/json" )
@@ -77,3 +78,20 @@ class PostResults(test_utils.TestCase):
         self.assertEqual(1, len(Results.objects.values()))
         self.assertEqual(5, len(Addons.objects.values()))
         self.assertEqual(7, len(DetailedResults.objects.values()))
+
+    def test_we_can_post_when_some_data_we_expect_is_missing(self):
+        import os
+        test_path = os.path.join(os.path.dirname(__file__))
+        with open(os.path.join(test_path, 'blob.json')) as f:
+            self.data = f.read()
+
+        self.data = json.loads(self.data)
+        
+        response = self.client.post("/en-US/report/", json.dumps(self.data),content_type="application/json" )
+        self.assertEqual(200, response.status_code)
+        self.assertEqual("Hello World", response.content)
+        self.assertEqual(1, len(SystemInfo.objects.values()))
+        self.assertEqual(1, len(Results.objects.values()))
+        self.assertEqual(13, len(Addons.objects.values()))
+        self.assertEqual(26, len(DetailedResults.objects.values()))
+
