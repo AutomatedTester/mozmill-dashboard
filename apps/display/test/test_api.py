@@ -1,6 +1,6 @@
 import test_utils
 import json
-from display.models import Results, SystemInfo, Addons
+from display.models import Results, SystemInfo, Addons, DetailedResults
 
 class PostResults(test_utils.TestCase):
     
@@ -76,3 +76,4 @@ class PostResults(test_utils.TestCase):
         self.assertEqual(1, len(SystemInfo.objects.values()))
         self.assertEqual(1, len(Results.objects.values()))
         self.assertEqual(5, len(Addons.objects.values()))
+        self.assertEqual(7, len(DetailedResults.objects.values()))

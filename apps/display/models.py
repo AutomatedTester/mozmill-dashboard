@@ -56,6 +56,15 @@ class Results(models.Model):
     report_version = models.CharField(max_length=10)
     results = models.TextField()
 
+class DetailedResults(models.Model):
+    id = models.AutoField(primary_key=True)
+    passed_function = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
+    filename = models.CharField(max_length=255)
+    failed = models.IntegerField()
+    passed = models.IntegerField()
+    results = models.ForeignKey(Results)
+
 class Addons(models.Model):
 
     id = models.AutoField(primary_key=True)

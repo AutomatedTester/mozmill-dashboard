@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from display.utils import filter_request
 from django.views.decorators.csrf import csrf_exempt
 
-from models import Results, SystemInfo, Addons
+from models import Results, SystemInfo, Addons, DetailedResults
 
 ##This is a function to deal with adding filters to elastic search in a less general way but without code duplication in the view code
 #The name parameter is whatever mozmill decides to call it. the Key is what it is in the request object
@@ -134,5 +134,14 @@ def report(request):
                           is_active = adds['isActive'],
                           results = results)
             addon.save()
+
+        for res in doc['results']:
+            desres = DetailedResults(passed_function = res['passed_function'],
+                                    name = res['name'],
+                                    filename = res['filename'],
+                                    failed = res['failed'],
+                                    passed = res['passed'],
+                                    results = results)
+            desres.save()
 
     return HttpResponse('Hello World')
