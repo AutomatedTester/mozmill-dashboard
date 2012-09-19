@@ -134,6 +134,5 @@ def report(request):
                           is_active = adds['isActive'],
                           results = results)
             addon.save()
-            pass
 
     return HttpResponse('Hello World')
