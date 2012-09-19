@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from display.utils import filter_request
 from django.views.decorators.csrf import csrf_exempt
 
-from models import Results
+from models import Results, SystemInfo, Addons
 
 ##This is a function to deal with adding filters to elastic search in a less general way but without code duplication in the view code
 #The name parameter is whatever mozmill decides to call it. the Key is what it is in the request object
@@ -80,26 +80,60 @@ def render_top_fail(request, results, data):
 @csrf_exempt
 def report(request):
     if request.method=="POST":
-        
+        date_format = '%Y-%m-%dT%H:%M:%SZ' 
         doc = json.loads(request.body)
-        
+        # TODO(David) Add validation checks to doc so we dont put duff data in
         try:
             del doc['_id']
             del doc['_rev']
         except:
             # we are only clearing so rough data so ok to ignore the exception
             pass
+        
 
-        for counter, function in enumerate(doc['results']):
-            if function['failed'] == 0:
-                doc['results'][counter]['passed_function'] = function['name']
-            else:
-                doc['results'][counter]['failed_function'] = function['name']
+        # Save the system info
+        system_info = SystemInfo(hostname = doc['system_info']['hostname'],
+                                 service_pack = doc['system_info']['service_pack'],
+                                 system = doc['system_info']['system'],
+                                 version = doc['system_info']['version'],
+                                 bits = doc['system_info']['bits'],
+                                 processor = doc['system_info']['processor'])
+        system_info.save()
 
+        # Save the results
         results = Results(results=doc, 
                           report_type=doc['report_type'], 
-                          time_upload=datetime.datetime.strptime(doc['time_upload'], '%Y-%m-%dT%H:%M:%SZ'))
+                          tests_repository = doc['tests_repository'],
+                          tests_changeset = doc['tests_changeset'],
+                          time_start = datetime.datetime.strptime(doc['time_start'], date_format),
+                          application_changeset = doc['application_changeset'],
+                          system_info=system_info,
+                          platform_version = doc['platform_version'],
+                          tests_passed = doc['tests_passed'],
+                          application_repository = doc['application_repository'],
+                          platform_changeset = doc['platform_changeset'],
+                          platform_repository = doc['platform_repository'],
+                          tests_failed = doc['tests_failed'],
+                          time_end= datetime.datetime.strptime(doc['time_end'], date_format),
+                          application_locale = doc['application_locale'],
+                          platform_buildid = doc['platform_buildid'],
+                          application_version = doc['application_version'],
+                          tests_skipped = doc['tests_skipped'],
+                          time_upload=datetime.datetime.strptime(doc['time_upload'], date_format),
+                          application_name = doc['application_name'],
+                          mozmill_version = doc['mozmill_version'],
+                          report_version = doc['report_version'])
         results.save()
-
+        
+        for adds in doc['addons']:
+            addon = Addons(name = adds['name'],
+                          is_compatible = adds['isCompatible'],
+                          version = adds['version'],
+                          addon_type = adds['type'],
+                          addon_id = adds['id'],
+                          is_active = adds['isActive'],
+                          results = results)
+            addon.save()
+            pass
 
     return HttpResponse('Hello World')
