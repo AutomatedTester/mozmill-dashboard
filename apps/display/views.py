@@ -86,6 +86,12 @@ def report(request):
             if not doc.has_key(field):
                 return HttpResponse("Unfortunately the field %s is missing" % field)
 
+        FIREFOX_APP_ID = "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
+
+        print doc['application_id']
+        if FIREFOX_APP_ID != doc['application_id']:
+            return HttpResponse("Unfortunately the incorrect Application ID was supplied")
+
         try:
             del doc['_id']
             del doc['_rev']

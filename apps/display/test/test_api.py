@@ -107,3 +107,19 @@ class PostResults(test_utils.TestCase):
         self.assertEqual(0, len(Results.objects.values()))
         self.assertEqual(0, len(Addons.objects.values()))
         self.assertEqual(0, len(DetailedResults.objects.values()))
+    
+    def test_that_we_get_an_error_message_back_when_wrong_app_id_sent(self):
+        import copy
+        data = copy.deepcopy(self.data)
+
+        data['application_id'] = 'foo'
+        
+        response = self.client.post("/en-US/report/", 
+            json.dumps(data),content_type="application/json" )
+        self.assertEqual(200, response.status_code)
+        self.assertEqual("Unfortunately the incorrect Application ID was supplied",
+                            response.content)
+        self.assertEqual(0, len(SystemInfo.objects.values()))
+        self.assertEqual(0, len(Results.objects.values()))
+        self.assertEqual(0, len(Addons.objects.values()))
+        self.assertEqual(0, len(DetailedResults.objects.values()))
