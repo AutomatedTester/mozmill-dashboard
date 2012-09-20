@@ -77,6 +77,15 @@ def report(request):
         date_format = '%Y-%m-%dT%H:%M:%SZ' 
         doc = json.loads(request.body)
         # TODO(David) Add validation checks to doc so we dont put duff data in
+
+        required_fields = ['application_id', 'mozmill_version', 'system_info',
+                           'tests_passed', 'tests_failed', 'tests_skipped',
+                           'time_start', 'time_end', 'report_type', 'report_type']
+
+        for field in required_fields:
+            if not doc.has_key(field):
+                return HttpResponse("Unfortunately the field %s is missing" % field)
+
         try:
             del doc['_id']
             del doc['_rev']
@@ -142,4 +151,4 @@ def report(request):
                                     results = results)
             desres.save()
 
-    return HttpResponse('Hello World')
+    return HttpResponse('Data has been stored')

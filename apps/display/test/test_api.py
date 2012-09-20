@@ -73,7 +73,7 @@ class PostResults(test_utils.TestCase):
         
         response = self.client.post("/en-US/report/", json.dumps(self.data),content_type="application/json" )
         self.assertEqual(200, response.status_code)
-        self.assertEqual("Hello World", response.content)
+        self.assertEqual("Data has been stored", response.content)
         self.assertEqual(1, len(SystemInfo.objects.values()))
         self.assertEqual(1, len(Results.objects.values()))
         self.assertEqual(5, len(Addons.objects.values()))
@@ -89,9 +89,21 @@ class PostResults(test_utils.TestCase):
         
         response = self.client.post("/en-US/report/", json.dumps(self.data),content_type="application/json" )
         self.assertEqual(200, response.status_code)
-        self.assertEqual("Hello World", response.content)
+        self.assertEqual("Data has been stored", response.content)
         self.assertEqual(1, len(SystemInfo.objects.values()))
         self.assertEqual(1, len(Results.objects.values()))
         self.assertEqual(13, len(Addons.objects.values()))
         self.assertEqual(26, len(DetailedResults.objects.values()))
 
+    def test_that_we_get_an_error_message_back_when_sending_invalid_data(self):
+        data = {}
+        
+        response = self.client.post("/en-US/report/", 
+            json.dumps(data),content_type="application/json" )
+        self.assertEqual(200, response.status_code)
+        self.assertEqual("Unfortunately the field application_id is missing",
+                            response.content)
+        self.assertEqual(0, len(SystemInfo.objects.values()))
+        self.assertEqual(0, len(Results.objects.values()))
+        self.assertEqual(0, len(Addons.objects.values()))
+        self.assertEqual(0, len(DetailedResults.objects.values()))
