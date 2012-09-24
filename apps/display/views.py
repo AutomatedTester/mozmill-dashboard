@@ -137,16 +137,17 @@ def report(request):
                           mozmill_version = _real_or_none('mozmill_version'),
                           report_version = _real_or_none('report_version'))
         results.save()
-        
-        for adds in doc['addons']:
-            addon = Addons(name = adds['name'],
-                          is_compatible = adds['isCompatible'],
-                          version = adds['version'],
-                          addon_type = adds['type'],
-                          addon_id = adds['id'],
-                          is_active = adds['isActive'],
-                          results = results)
-            addon.save()
+        if doc.has_key('addons'):
+
+            for adds in doc['addons']:
+                addon = Addons(name = adds['name'],
+                              is_compatible = adds['isCompatible'],
+                              version = adds['version'],
+                              addon_type = adds['type'],
+                              addon_id = adds['id'],
+                              is_active = adds['isActive'],
+                              results = results)
+                addon.save()
 
         for res in doc['results']:
             desres = DetailedResults(passed_function = res['passed_function'],
