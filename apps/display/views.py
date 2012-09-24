@@ -28,14 +28,18 @@ def reporter(request, test_type='all', top_fail_view=False):
     }
 
     if test_type == 'all':
-        results = Results.objects.select_related().all()[:100]
+        results = Results.objects.all().order_by('-time_start')
     else:
-        results = Results.objects.filter(report_type = 'firefox-%s' % (test_type)).select_related()
+        results = Results.objects.filter(report_type = 'firefox-%s' % (test_type))
         
-     
+    try:
+        os_query = request.GET['os']
+        results = results.filter(system_info__system__exact=os_query)[:100]
+    except Exception as e:
+        print e.__str__()
 
+    
     #Adds filters based on get paramaters for elastic search
-    filter_request(request, results, 'os', 'system', oses)
     filter_request(request, results, 'locale', 
                    'application_locale', locales)
 
@@ -52,7 +56,7 @@ def reporter(request, test_type='all', top_fail_view=False):
     #data['to_date']=es_object.to_date
     
     if top_fail_view:
-        return render_top_fail(request, results,data)
+        return render_top_fail(request, results, data)
     else:
         return render_reports_view(request, results, data)
         
