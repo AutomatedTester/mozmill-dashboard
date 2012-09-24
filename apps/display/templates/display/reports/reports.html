@@ -18,9 +18,7 @@
   <thead>
   <tr>
     <th class='header'>Date</th>
-    <th class='header'>Version</th>
     <th class='header'>Build</th>
-    <th class='header'>Locale</th>
     <th class='header'>Platform</th>
     <th class='header'>Version</th>
     <th class='header'>CPU</th>
@@ -31,16 +29,14 @@
   </thead>
 {% for report in reports %}
   <tr>
-    <td><a href ="/report/{{report.id}}">{{report.date}}</a></td>
-    <td>{{report.version}}</td>
-    <td>{{report.build}}</td>
-    <td>{{report.locale}}</td>
-    <td>{{report.platform}}</td>
+    <td><a href ="/report/{{report.id}}">{{report.time_start}}</a></td>
+    <td>{{report.platform_buildid}}</td>
+    <td>{{report.system_info.system}}</td>
     <td>{{report.platform_version}}</td>
-    <td>{{report.cpu}}</td>
-    <td>{{report.pass}}</td>
-    <td>{{report.skip}}</td>
-    <td>{{report.fail}}</td>
+    <td>{{report.system_info.processor}}</td>
+    <td>{{report.tests_passed}}</td>
+    <td>{{report.tests_skipped}}</td>
+    <td>{{report.tests_failed}}</td>
 </tr>
 {% endfor %}
 </table>

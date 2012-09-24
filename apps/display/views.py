@@ -27,7 +27,11 @@ def reporter(request, test_type='all', top_fail_view=False):
         'locales':locales,
     }
 
-    results = Results.objects.filter(report_type = 'firefox-%' % test_type)
+    if test_type == 'all':
+        results = Results.objects.select_related().all()[:100]
+    else:
+        results = Results.objects.filter(report_type = 'firefox-%s' % (test_type)).select_related()
+        
      
 
     #Adds filters based on get paramaters for elastic search
@@ -53,11 +57,11 @@ def reporter(request, test_type='all', top_fail_view=False):
         return render_reports_view(request, results, data)
         
 def render_reports_view(request, results, data):
-    data['reports'] = results.objects.values() 
+    data['reports'] = results 
     test_type=data['report_type']
 
     if test_type == 'all':
-        return jingo.render(request, 'display/reports/reports.html', data)
+        return jingo.render(request, 'display/reports/reports.html', data) 
     elif test_type == 'functional':
         return jingo.render(request, 'display/reports/reports.html', data)
     elif test_type == 'endurance':
