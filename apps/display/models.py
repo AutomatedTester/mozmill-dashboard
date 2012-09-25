@@ -39,7 +39,7 @@ class Results(models.Model):
     time_start = models.DateTimeField()
     application_changeset = models.CharField(max_length=30, null=True)
     system_info = models.ForeignKey(SystemInfo)
-    platform_version = models.CharField(max_length=10, null=True)
+    platform_version = models.CharField(max_length=30, null=True)
     tests_passed = models.IntegerField()
     application_repository = models.CharField(max_length=50, null=True)
     platform_changeset = models.CharField(max_length=30, null=True)
@@ -58,7 +58,7 @@ class Results(models.Model):
 
 class DetailedResults(models.Model):
     id = models.AutoField(primary_key=True)
-    passed_function = models.CharField(max_length=100)
+    function = models.CharField(max_length=100, null=True)
     name = models.CharField(max_length=100)
     filename = models.CharField(max_length=255)
     failed = models.IntegerField()
@@ -68,11 +68,10 @@ class DetailedResults(models.Model):
 class Addons(models.Model):
 
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=150)
     is_compatible = models.BooleanField()
     version = models.CharField(max_length=30)
     addon_type = models.CharField(max_length=20, default='extension')
     addon_id = models.CharField(max_length=255)
     is_active = models.BooleanField()
     results = models.ForeignKey(Results)
-
