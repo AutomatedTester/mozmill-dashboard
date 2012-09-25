@@ -4,7 +4,6 @@ import datetime
 
 from django.http import HttpResponse
 
-from display.utils import filter_request
 from django.views.decorators.csrf import csrf_exempt
 
 from models import Results, SystemInfo, Addons, DetailedResults
