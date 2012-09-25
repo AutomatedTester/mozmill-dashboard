@@ -34,23 +34,27 @@ def reporter(request, test_type='all', top_fail_view=False):
         
     try:
         os_query = request.GET['os']
-        results = results.filter(system_info__system__exact=os_query)[:100]
+        if os_query != 'all':
+            results = results.filter(system_info__system__exact=os_query)
     except Exception as e:
         print e.__str__()
 
     try:
         locale_query = request.GET['locale']
-        results = results.filter(application_locale = locale_query)
+        if locale_query != 'all':
+            results = results.filter(application_locale = locale_query)
     except Exception as e:
         print e.__str__()
 
     
     ##If the dates have been set by the request use them, otherwise use the default
     try:
-        request.GET['from_date']
-        request.GET['to_date']
-    except KeyError:
-        pass
+        from_date = request.GET['from_date']
+        results = results.filter(time_start__gte = datetime.datetime(*[int(its) for its in from_date.split('-')]))
+        to_date = request.GET['to_date']
+        results = results.filter(time_start__lte = datetime.datetime(*[int(its) for its in to_date.split('-')]))
+    except Exception as e:
+        print e.__str__()
     else:
         pass
 
@@ -58,9 +62,9 @@ def reporter(request, test_type='all', top_fail_view=False):
     #data['to_date']=es_object.to_date
     
     if top_fail_view:
-        return render_top_fail(request, results, data)
+        return render_top_fail(request, results[:100], data)
     else:
-        return render_reports_view(request, results, data)
+        return render_reports_view(request, results[:100], data)
         
 def render_reports_view(request, results, data):
     data['reports'] = results 
@@ -76,7 +80,6 @@ def render_reports_view(request, results, data):
         return jingo.render(request, 'display/reports/updateReports.html', data)
 
 def render_top_fail(request, results, data):
-    print results.objects.values()[:10]
     data['topfails']=results.objects.values()[:10]
     return jingo.render(request, 'display/facets/all.html', data)
 
@@ -160,7 +163,8 @@ def report(request):
                 addon.save()
 
         for res in doc['results']:
-            desres = DetailedResults(passed_function = res['passed_function'],
+            function = res['passed_function'] if res.has_key('passed_function') else res['failed_function']
+            desres = DetailedResults(function = function,
                                     name = res['name'],
                                     filename = res['filename'],
                                     failed = res['failed'],
