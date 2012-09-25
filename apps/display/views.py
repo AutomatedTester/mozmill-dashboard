@@ -38,11 +38,13 @@ def reporter(request, test_type='all', top_fail_view=False):
     except Exception as e:
         print e.__str__()
 
-    
-    #Adds filters based on get paramaters for elastic search
-    filter_request(request, results, 'locale', 
-                   'application_locale', locales)
+    try:
+        locale_query = request.GET['locale']
+        results = results.filter(application_locale = locale_query)
+    except Exception as e:
+        print e.__str__()
 
+    
     ##If the dates have been set by the request use them, otherwise use the default
     try:
         request.GET['from_date']
