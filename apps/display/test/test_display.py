@@ -25,4 +25,5 @@ class DisplayResults(test_utils.TestCase):
     def test_that_we_can_load_a_specific_result(self):
         response = self.client.get("/en-US/report/2")
         self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(response, 'display/report/functional.html')
 
