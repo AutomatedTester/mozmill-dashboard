@@ -79,7 +79,7 @@ class Results(models.Model):
     time_end = models.DateTimeField()
     application_locale = models.CharField(max_length=10, null=True)
     platform_buildid = models.CharField(max_length=30, null=True)
-    application_version = models.CharField(max_length=10, null=True)
+    application_version = models.CharField(max_length=30, null=True)
     tests_skipped = models.IntegerField()
     time_upload = models.DateTimeField()
     application_name = models.CharField(max_length=20, null=True)
