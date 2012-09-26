@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from models import Results, SystemInfo, Addons, DetailedResults
+from models import Iterations, Stats, StatsInfo, CheckPoints, Endurance
 
 ##This is a function to deal with adding filters to elastic search in a less general way but without code duplication in the view code
 #The name parameter is whatever mozmill decides to call it. the Key is what it is in the request object
@@ -116,6 +117,44 @@ def report(request):
                 return doc[field]
             else:
                 return None
+        
+        endurance = None
+        if doc['report_type'] == 'firefox-endurance':
+
+            endurance = Endurance(delay = doc['endurance']['delay'],
+                                  entities = doc['endurance']['entities'],
+                                  iterations = doc['endurance']['iterations'],
+                                  restart = doc['endurance']['restart'])
+            endurance.save()
+            for res in doc['endurance']['results']:
+                
+                for its in res['iterations']:
+                    # Save The specific info for the stats
+                    stats_info_res = StatsInfo(max_mem = its['stats']['resident']['max'],
+                                           ave_mem = its['stats']['resident']['average'],
+                                           min_mem = its['stats']['resident']['min'])
+                    stats_info_res.save()
+                    stats_info_exp = StatsInfo(max_mem = its['stats']['explicit']['max'],
+                                           ave_mem = its['stats']['explicit']['average'],
+                                           min_mem = its['stats']['explicit']['min'])
+                    stats_info_exp.save()
+                
+                #Save Stats
+                    stats = Stats(resident = stats_info_res,
+                              explicit = stats_info_exp)
+                    stats.save()
+
+                    iteration = Iterations(stats=stats)
+                    iteration.save()
+
+                    for checks in its['checkpoints']:
+                        checkpoint = CheckPoints(resident = checks['resident'],
+                                             timestamp = datetime.datetime.strptime(checks['timestamp'],
+                                             '%Y-%m-%dT%H:%M:%S.%fZ'),
+                                             explicit = checks['explicit'],
+                                             label = checks['label'],
+                                             iterations = iteration)
+                        checkpoint.save()
         # Save the system info
         system_info = SystemInfo(hostname = doc['system_info']['hostname'],
                                  service_pack = doc['system_info']['service_pack'],
@@ -147,7 +186,8 @@ def report(request):
                           time_upload=datetime.datetime.strptime(doc['time_upload'], date_format),
                           application_name = _real_or_none('application_name'),
                           mozmill_version = _real_or_none('mozmill_version'),
-                          report_version = _real_or_none('report_version'))
+                          report_version = _real_or_none('report_version'),
+                          endurance = endurance)
         results.save()
         if doc.has_key('addons'):
 
@@ -170,5 +210,6 @@ def report(request):
                                     passed = res['passed'],
                                     results = results)
             desres.save()
+
 
     return HttpResponse('Data has been stored')

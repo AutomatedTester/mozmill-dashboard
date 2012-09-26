@@ -20,6 +20,37 @@ class OS(models.Model):
     def __unicode__(self):
         return self.OS
 
+class Endurance(models.Model):
+    id = models.AutoField(primary_key=True)
+    delay = models.CharField(max_length=20)
+    entities = models.IntegerField()
+    iterations = models.IntegerField()
+    restart = models.BooleanField()
+
+
+class StatsInfo(models.Model):
+    id = models.AutoField(primary_key=True)
+    max_mem = models.IntegerField()
+    ave_mem = models.IntegerField()
+    min_mem = models.IntegerField()
+
+class Stats(models.Model):
+    id = models.AutoField(primary_key=True)
+    resident = models.ForeignKey(StatsInfo, related_name='stats_resident')
+    explicit = models.ForeignKey(StatsInfo, related_name='stats_explicit')
+
+class Iterations(models.Model):
+    id = models.AutoField(primary_key=True)
+    stats = models.ForeignKey(Stats)
+
+class CheckPoints(models.Model):
+    id = models.AutoField(primary_key=True)
+    resident = models.IntegerField()
+    timestamp = models.DateTimeField()
+    explicit = models.IntegerField()
+    label = models.CharField(max_length=255, null=True)
+    iterations = models.ForeignKey(Iterations)
+
 class SystemInfo(models.Model):
 
     id = models.AutoField(primary_key=True)
@@ -55,6 +86,7 @@ class Results(models.Model):
     mozmill_version = models.CharField(max_length=10, null=True)
     report_version = models.CharField(max_length=10, null=True)
     results = models.TextField()
+    endurance = models.ForeignKey(Endurance, null=True)
 
 class DetailedResults(models.Model):
     id = models.AutoField(primary_key=True)
