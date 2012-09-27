@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from models import Results, SystemInfo, Addons, DetailedResults
 from models import Iterations, Stats, StatsInfo, CheckPoints, Endurance
+from models import Updates, BuildInfo, Patch
 
 ##This is a function to deal with adding filters to elastic search in a less general way but without code duplication in the view code
 #The name parameter is whatever mozmill decides to call it. the Key is what it is in the request object
@@ -189,6 +190,7 @@ def report(request):
                           report_version = _real_or_none('report_version'),
                           endurance = endurance)
         results.save()
+    
         if doc.has_key('addons'):
 
             for adds in doc['addons']:
@@ -210,6 +212,41 @@ def report(request):
                                     passed = res['passed'],
                                     results = results)
             desres.save()
+
+        if doc['report_type'] == 'firefox-update':
+            for update in doc['updates']:
+                patch = Patch(url_mirror = update['patch']['url_mirror'],
+                          build_id = update['patch']['buildid'],
+                          download_duration = update['patch']['download_duration'],
+                          patch_type = update['patch']['type'],
+                          is_complete = update['patch']['is_complete'],
+                          channel = update['patch']['channel'],
+                          size = update['patch']['size'])
+                patch.save()
+                build_pre = BuildInfo(build_id = update['build_pre']['buildid'],
+                                      locale = update['build_pre']['locale'],
+                                      disabled_addons = update['build_pre']['disabled_addons'],
+                                      version = update['build_pre']['version'],
+                                      useragent = update['build_pre']['user_agent'],
+                                      url_aus = update['build_pre']['url_aus'],
+                                      patch = patch)
+                build_pre.save()
+                build_post = BuildInfo(build_id = update['build_post']['buildid'],
+                                      locale = update['build_post']['locale'],
+                                      disabled_addons = update['build_post']['disabled_addons'],
+                                      version = update['build_post']['version'],
+                                      useragent = update['build_post']['user_agent'],
+                                      url_aus = update['build_post']['url_aus'],
+                                      patch = patch)
+                build_post.save()
+
+                updates = Updates(build_pre = build_pre,
+                                  build_post = build_post,
+                                  result = results,
+                                  success = update['success'],
+                                  fallback = update['fallback'],
+                                  target_buildid = update['target_buildid'])
+                updates.save()
 
 
     return HttpResponse('Data has been stored')

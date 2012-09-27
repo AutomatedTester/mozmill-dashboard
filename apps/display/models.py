@@ -107,3 +107,33 @@ class Addons(models.Model):
     addon_id = models.CharField(max_length=255)
     is_active = models.BooleanField()
     results = models.ForeignKey(Results)
+
+class Patch(models.Model):
+    id = models.AutoField(primary_key=True)
+    url_mirror = models.TextField()
+    build_id = models.CharField(max_length=100)
+    download_duration = models.IntegerField()
+    patch_type = models.CharField(max_length=30)
+    is_complete = models.BooleanField()
+    channel = models.CharField(max_length=100)
+    size = models.IntegerField()
+
+class BuildInfo(models.Model):
+    id = models.AutoField(primary_key=True)
+    build_id = models.CharField(max_length=100)
+    locale = models.CharField(max_length=30)
+    disabled_addons = models.TextField()
+    version = models.CharField(max_length=100)
+    useragent = models.TextField()
+    url_aus = models.TextField()
+    patch = models.ForeignKey(Patch)
+    fallback = models.BooleanField()
+
+class Updates(models.Model):
+    id = models.AutoField(primary_key=True)
+    build_pre = models.ForeignKey(BuildInfo, related_name='update_build_pre')
+    build_post = models.ForeignKey(BuildInfo, related_name='update_build_post')
+    result = models.ForeignKey(Results)
+    success = models.BooleanField()
+    fallback = models.BooleanField()
+    target_buildid = models.CharField(max_length=100)

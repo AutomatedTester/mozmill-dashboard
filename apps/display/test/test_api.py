@@ -1,7 +1,7 @@
 import test_utils
 import json
 from display.models import Results, SystemInfo, Addons, DetailedResults, Iterations
-from display.models import StatsInfo
+from display.models import StatsInfo, Updates, BuildInfo, Patch
 
 class PostResults(test_utils.TestCase):
     
@@ -129,6 +129,18 @@ class PostResults(test_utils.TestCase):
         self.assertEqual(26, len(DetailedResults.objects.values()))
         self.assertEqual(90, len(Iterations.objects.values()))
         self.assertEqual(180, len(StatsInfo.objects.values()))
+    
+    def test_we_can_post_update_test_data_and_populate_those_models(self):
+        response = self.client.post("/en-US/report/", json.dumps(self.data),content_type="application/json" )
+        self.assertEqual(200, response.status_code)
+        self.assertEqual("Data has been stored", response.content)
+        self.assertEqual(1, len(SystemInfo.objects.values()))
+        self.assertEqual(1, len(Results.objects.values()))
+        self.assertEqual(5, len(Addons.objects.values()))
+        self.assertEqual(7, len(DetailedResults.objects.values()))
+        self.assertEqual(2, len(BuildInfo.objects.values()))
+        self.assertEqual(1, len(Updates.objects.values()))
+        self.assertEqual(1, len(Patch.objects.values()))
 
     def test_that_we_get_an_error_message_back_when_sending_invalid_data(self):
         data = {}
