@@ -229,7 +229,7 @@ def report(request):
                                       version = update['build_pre']['version'],
                                       useragent = update['build_pre']['user_agent'],
                                       url_aus = update['build_pre']['url_aus'],
-                                      patch = patch)
+                                      )
                 build_pre.save()
                 build_post = BuildInfo(build_id = update['build_post']['buildid'],
                                       locale = update['build_post']['locale'],
@@ -237,7 +237,7 @@ def report(request):
                                       version = update['build_post']['version'],
                                       useragent = update['build_post']['user_agent'],
                                       url_aus = update['build_post']['url_aus'],
-                                      patch = patch)
+                                      )
                 build_post.save()
 
                 updates = Updates(build_pre = build_pre,
@@ -245,7 +245,8 @@ def report(request):
                                   result = results,
                                   success = update['success'],
                                   fallback = update['fallback'],
-                                  target_buildid = update['target_buildid'])
+                                  target_buildid = update['target_buildid'],
+                                  patch = patch)
                 updates.save()
 
 

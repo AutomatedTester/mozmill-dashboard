@@ -126,8 +126,6 @@ class BuildInfo(models.Model):
     version = models.CharField(max_length=100)
     useragent = models.TextField()
     url_aus = models.TextField()
-    patch = models.ForeignKey(Patch)
-    fallback = models.BooleanField()
 
 class Updates(models.Model):
     id = models.AutoField(primary_key=True)
@@ -136,4 +134,5 @@ class Updates(models.Model):
     result = models.ForeignKey(Results)
     success = models.BooleanField()
     fallback = models.BooleanField()
+    patch = models.ForeignKey(Patch)
     target_buildid = models.CharField(max_length=100)
