@@ -30,3 +30,10 @@ class DisplayResults(test_utils.TestCase):
         response = self.client.get("/en-US/endurance/")
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, 'display/reports/updateReports.html')
+    
+    def test_that_we_can_load_individual_update_tests(self):
+        response = self.client.get("/en-US/report/1")
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(response, 'display/report/update.html')
+        # Need to update the Fixture before adding this back
+        # self.assertEquals(1, len(response.context['update'].values_list()))

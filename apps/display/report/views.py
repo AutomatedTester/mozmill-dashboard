@@ -1,7 +1,7 @@
 import jingo
 from django.http import HttpResponse, HttpResponseForbidden
 
-from display.models import Results, Addons
+from display.models import Results, Addons, Updates
 
 BYTE_IN_MB=1048576.0
 
@@ -162,48 +162,37 @@ def endurance(request,data,report):
 
 
 def update(request,data,report):
-
     try:
-        update=report['updates'][0]
-    except IndexError:
+        updates = Updates.objects.filter(result = report)[0:1].get()
+        update=updates
+    except Updates.DoesNotExist:
         data['update_results']=False
         return jingo.render(request, 'display/report/update.html', data)
     else:
         data['update_results']=True
 
-    data['pre']={
-        'user_agent':update['build_pre']['user_agent'],
-        'locale':update['build_pre']['locale'],
-        'buildid':update['build_pre']['buildid'],
-        'url_aus':update['build_pre']['url_aus'],
-    }
-    data['post']={
-        'user_agent':update['build_post']['user_agent'],
-        'locale':update['build_post']['locale'],
-        'buildid':update['build_post']['buildid'],
-        'url_aus':update['build_post']['url_aus'],
-    }
+    data['pre']=update.build_pre
+    data['post']=update.build_post
+
+    data['channel']=update.patch.channel
+    data['url_mirror']=update.patch.url_mirror
+    data['size']=update.patch.size
+    data['download_duration']=update.patch.download_duration
+    data['type']=update.patch.patch_type
+    data['disabled_addons']=update.build_post.disabled_addons
 
 
-    data['channel']=update['patch']['channel']
-    data['url_mirror']=update['patch']['url_mirror']
-    data['size']=update['patch']['size']
-    data['download_duration']=update['patch']['download_duration']
-    data['type']=update['patch']['type']
-    data['disabled_addons']=update['build_post']['disabled_addons']
-
-
-    if update['success']:
+    if update.success:
         data['pass_fail']='Pass'
     else:
         data['pass_fail']='Fail'
 
-    if update['patch']['is_complete']:
+    if update.patch.is_complete:
         data['complete']='complete'
     else:
         data['complete']='partial'
 
-    if update['fallback']:
+    if update.fallback:
         data['fallback']='fallback'
     else:
         data['fallback']='direct'
