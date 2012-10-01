@@ -10,7 +10,7 @@ class DisplayResults(test_utils.TestCase):
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, 
                                 'display/reports/reports.html')
-        self.assertEquals(2, len(response.context['reports'].values_list()))
+        self.assertEquals(3, len(response.context['reports'].values_list()))
 
     def test_that_filters_dont_create_500(self):
         response = self.client.get('/en-US/', {'os': 'all', 
@@ -35,5 +35,3 @@ class DisplayResults(test_utils.TestCase):
         response = self.client.get("/en-US/report/1")
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, 'display/report/update.html')
-        # Need to update the Fixture before adding this back
-        # self.assertEquals(1, len(response.context['update'].values_list()))
