@@ -28,6 +28,7 @@ def report(request,_id):
         "failed":report.tests_failed,
         "skipped":report.tests_skipped,
         "report_type":report.report_type,
+        "mozmill_version": report.mozmill_version,
         'results':[],
     }
 
