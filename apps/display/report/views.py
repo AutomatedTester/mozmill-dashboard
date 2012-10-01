@@ -31,7 +31,9 @@ def report(request,_id):
         'results':[],
     }
 
-    data['extensions'] = Addons.objects.filter(results=report)
+    data['extensions'] = Addons.objects.filter(results=report, addon_type='extension')
+    data['themes'] = Addons.objects.filter(results=report, addon_type='theme')
+    data['plugins'] = Addons.objects.filter(results=report, addon_type='plugin')
 
 
     #Make sure that there are no stupid argument

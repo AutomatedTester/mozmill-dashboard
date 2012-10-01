@@ -13,7 +13,7 @@
        <td><a href="{{app_sourcestamp}}">{{app_sourcestamp}}</a></td>
       </tr>
       {% endif %}
-      {% if extentions %}
+      {% if extensions %}
       <tr>
         <th>Add-ons:</th>
         <td>
@@ -22,8 +22,8 @@
             <ul>
               {% for extension in extensions %}
               <li>{{extension.name}} {{extension.version}}
-                ({% if extension.isActive %}<span class="passed">enabled</span>{% else %}<span class="failed">disabled</span>{% endif %},
-                {% if extension.isCompatible %}<span class="passed">compatible</span>{% else %}<span class="failed">incompatible</span>{% endif %})</li>
+                ({% if extension.is_active %}<span class="passed">enabled</span>{% else %}<span class="failed">disabled</span>{% endif %},
+                {% if extension.is_Compatible %}<span class="passed">compatible</span>{% else %}<span class="failed">incompatible</span>{% endif %})</li>
               {% else %}
               <li>None</li>
               {% endfor %}
@@ -32,8 +32,8 @@
             <ul>
               {% for extension in themes%}
               <li>{{extension.name}} {{extension.version}}
-                ({% if extension.isActive %}<span class="passed">enabled</span>{% else %}<span class="failed">disabled</span>{% endif %},
-                {% if extension.isCompatible %}<span class="passed">compatible</span>{% else %}<span class="failed">incompatible</span>{% endif %})</li>
+                ({% if extension.is_active %}<span class="passed">enabled</span>{% else %}<span class="failed">disabled</span>{% endif %},
+                {% if extension.is_compatible %}<span class="passed">compatible</span>{% else %}<span class="failed">incompatible</span>{% endif %})</li>
               {% else %}
               <li>None</li>
               {% endfor %}
@@ -42,8 +42,8 @@
             <ul>
               {% for extension in plugins%}
               <li>{{extension.name}} {{extension.version}}
-                ({% if extension.isActive %}<span class="passed">enabled</span>{% else %}<span class="failed">disabled</span>{% endif %},
-                {% if extension.isCompatible %}<span class="passed">compatible</span>{% else %}<span class="failed">incompatible</span>{% endif %})</li>
+                ({% if extension.is_active %}<span class="passed">enabled</span>{% else %}<span class="failed">disabled</span>{% endif %},
+                {% if extension.is_Compatible %}<span class="passed">compatible</span>{% else %}<span class="failed">incompatible</span>{% endif %})</li>
               {% else %}
               <li>None</li>
               {% endfor %}
