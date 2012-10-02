@@ -128,7 +128,7 @@ class PostResults(test_utils.TestCase):
         self.assertEqual(14, len(Addons.objects.values()))
         self.assertEqual(26, len(DetailedResults.objects.values()))
         self.assertEqual(90, len(Iterations.objects.values()))
-        self.assertEqual(180, len(StatsInfo.objects.values()))
+        self.assertEqual(198, len(StatsInfo.objects.values()))
     
     def test_we_can_post_update_test_data_and_populate_those_models(self):
         response = self.client.post("/en-US/report/", json.dumps(self.data),content_type="application/json" )

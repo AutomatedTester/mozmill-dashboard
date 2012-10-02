@@ -27,7 +27,6 @@ class Endurance(models.Model):
     iterations = models.IntegerField()
     restart = models.BooleanField()
 
-
 class StatsInfo(models.Model):
     id = models.AutoField(primary_key=True)
     max_mem = models.IntegerField()
@@ -39,9 +38,17 @@ class Stats(models.Model):
     resident = models.ForeignKey(StatsInfo, related_name='stats_resident')
     explicit = models.ForeignKey(StatsInfo, related_name='stats_explicit')
 
+class EnduranceResults(models.Model):
+    id = models.AutoField(primary_key=True)
+    test_method = models.CharField(max_length=255)
+    test_file = models.TextField()
+    endurance = models.ForeignKey(Endurance, related_name='endres_endurance')
+    stats = models.ForeignKey(Stats, related_name='endres_stats')
+
 class Iterations(models.Model):
     id = models.AutoField(primary_key=True)
     stats = models.ForeignKey(Stats)
+    endurance_results = models.ForeignKey(EnduranceResults)
 
 class CheckPoints(models.Model):
     id = models.AutoField(primary_key=True)

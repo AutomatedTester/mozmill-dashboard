@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from models import Results, SystemInfo, Addons, DetailedResults
-from models import Iterations, Stats, StatsInfo, CheckPoints, Endurance
+from models import Iterations, Stats, StatsInfo, CheckPoints, Endurance, EnduranceResults
 from models import Updates, BuildInfo, Patch
 
 ##This is a function to deal with adding filters to elastic search in a less general way but without code duplication in the view code
@@ -128,7 +128,27 @@ def report(request):
                                   restart = doc['endurance']['restart'])
             endurance.save()
             for res in doc['endurance']['results']:
+                 
+                stats_info_res = StatsInfo(max_mem = res['stats']['resident']['max'],
+                                           ave_mem = res['stats']['resident']['average'],
+                                           min_mem = res['stats']['resident']['min'])
+                stats_info_res.save()
+                stats_info_exp = StatsInfo(max_mem = res['stats']['explicit']['max'],
+                                           ave_mem = res['stats']['explicit']['average'],
+                                           min_mem = res['stats']['explicit']['min'])
+                stats_info_exp.save()
                 
+                #Save Stats
+                stats = Stats(resident = stats_info_res,
+                              explicit = stats_info_exp)
+                stats.save()
+                endurance_results = EnduranceResults(test_method = res['testMethod'],
+                                                     test_file = res['testFile'],
+                                                     endurance = endurance,
+                                                     stats = stats)
+                endurance_results.save()
+
+
                 for its in res['iterations']:
                     # Save The specific info for the stats
                     stats_info_res = StatsInfo(max_mem = its['stats']['resident']['max'],
@@ -140,12 +160,13 @@ def report(request):
                                            min_mem = its['stats']['explicit']['min'])
                     stats_info_exp.save()
                 
-                #Save Stats
+                    #Save Stats
                     stats = Stats(resident = stats_info_res,
                               explicit = stats_info_exp)
                     stats.save()
 
-                    iteration = Iterations(stats=stats)
+                    iteration = Iterations(stats=stats,
+                                           endurance_results = endurance_results)
                     iteration.save()
 
                     for checks in its['checkpoints']:
