@@ -35,3 +35,8 @@ class DisplayResults(test_utils.TestCase):
         response = self.client.get("/en-US/report/1")
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, 'display/report/update.html')
+    
+    def test_that_we_can_load_individual_endurance(self):
+        response = self.client.get("/en-US/report/3")
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(response, 'display/report/endurance.html')
