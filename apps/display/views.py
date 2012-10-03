@@ -38,15 +38,14 @@ def reporter(request, test_type='all', top_fail_view=False):
         if os_query != 'all':
             results = results.filter(system_info__system__exact=os_query)
     except Exception as e:
-        print e.__str__()
+        pass
 
     try:
         locale_query = request.GET['locale']
         if locale_query != 'all':
             results = results.filter(application_locale = locale_query)
     except Exception as e:
-        print e.__str__()
-
+        pass
     
     ##If the dates have been set by the request use them, otherwise use the default
     try:
@@ -55,8 +54,6 @@ def reporter(request, test_type='all', top_fail_view=False):
         to_date = request.GET['to_date']
         results = results.filter(time_start__lte = datetime.datetime(*[int(its) for its in to_date.split('-')]))
     except Exception as e:
-        print e.__str__()
-    else:
         pass
 
     #data['from_date']=es_object.from_date
@@ -102,7 +99,6 @@ def report(request):
 
         FIREFOX_APP_ID = "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
 
-        print doc['application_id']
         if FIREFOX_APP_ID != doc['application_id']:
             return HttpResponse("Unfortunately the incorrect Application ID was supplied")
 
